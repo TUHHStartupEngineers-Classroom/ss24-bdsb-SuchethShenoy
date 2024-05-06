@@ -1,29 +1,13 @@
----
-title: "Tidyverse"
-author: "Sucheth Shenoy"
----
-
-# Load Libraries
-```{r}
 library("tidyverse")
-```
 
-# Importing Files
-```{r}
-bikes_tbl      <- read_excel(path = "tidyverse_files/01_bike_sales/01_raw_data/bikes.xlsx")
-bikeshops_tbl  <- read_excel("tidyverse_files/01_bike_sales/01_raw_data/bikeshops.xlsx")
-orderlines_tbl <- read_excel("tidyverse_files/01_bike_sales/01_raw_data/orderlines.xlsx")
-```
+bikes_tbl      <- read_excel(path = "content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/bikes.xlsx")
+orderlines_tbl <- read_excel("content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/orderlines.xlsx")
+bikeshops_tbl  <- read_excel("content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/bikeshops.xlsx")
 
-# Joining Data
-```{r}
 bike_orderlines_joined_tbl <- orderlines_tbl %>%
   left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%
   left_join(bikeshops_tbl, by = c("customer.id" = "bikeshop.id"))
-```
 
-# Wrangling Data
-```{r}
 bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
   separate(col    = location,
            into   = c("city", "state"),
@@ -31,12 +15,8 @@ bike_orderlines_wrangled_tbl <- bike_orderlines_joined_tbl %>%
   mutate(total.price = price * quantity) %>%
   rename(bikeshop = name) %>%
   set_names(names(.) %>% str_replace_all("\\.", "_"))
-```
 
-# Business Insights
 
-## Sales by location (state)
-```{r}
 sales_by_location_tbl <- bike_orderlines_wrangled_tbl %>%
   select(state, total_price) %>%
   group_by(state) %>% 
@@ -45,9 +25,6 @@ sales_by_location_tbl <- bike_orderlines_wrangled_tbl %>%
                                      decimal.mark = ",", 
                                      prefix = "", 
                                      suffix = " €"))
-```
-
-```{r plot1, fig.width=10, fig.height=7}
 sales_by_location_tbl %>%
   ggplot(aes(x = state, y = sales)) +
   geom_col(fill = "#2DC6D6") + # Use geom_col for a bar plot
@@ -63,9 +40,7 @@ sales_by_location_tbl %>%
     x = "", # Override defaults for x and y
     y = "Revenue"
   )
-```
-## Sales by location (state) and year
-```{r}
+
 sales_by_year_location_tbl <- bike_orderlines_wrangled_tbl %>%
   select(order_date, total_price, state) %>%
   mutate(year = year(order_date)) %>%
@@ -76,9 +51,6 @@ sales_by_year_location_tbl <- bike_orderlines_wrangled_tbl %>%
                                      decimal.mark = ",", 
                                      prefix = "", 
                                      suffix = " €"))
-```
-
-```{r plot2, fig.width=10, fig.height=7}
 sales_by_year_location_tbl %>%
   ggplot(aes(x = year, y = sales, fill = state)) +
   geom_col() + # Run up to here to get a stacked bar plot
@@ -93,123 +65,3 @@ sales_by_year_location_tbl %>%
     y = "Revenue",
     fill = "Location" # Changes the legend name,
   )
-```
-
-
-<!--
-::: callout-note
-
-You can delete everything in here and start fresh.
-
-:::
-
-This is a `.qmd` file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a \# in front of your text, it will create a top level-header.
-
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
-
-# Text Formatting
-
-*italics* and **bold**
-
-superscript^2^ / subscript~2~
-
-~~strikethrough~~
-
-`verbatim code`
-
-> Blockquote
-
-# Headings
-
-## Header 2
-
-### Header 3
-
-#### Header 4
-
-##### Header 5
-
-###### Header 6
-
-# Links & Images
-
-<https://quarto.org>
-
-[Quarto](https://quarto.org)
-
-![Caption](../../assets/img/elephant.png)
-
-[![Caption](../../assets/img/elephant.png)](https://quarto.org)
-
-[![Caption](../../assets/img/elephant.png)](https://quarto.org "An elephant")
-
-# Lists
-
-* unordered list
-
-   + sub-item 1
-
-   + sub-item 2
-
-       - sub-sub-item 1
-
-*   item 2
-
-   Continued (indent 4 spaces)
-
-1. ordered list
-
-2. item 2
-
-   i) sub-item 1
-
-        A.  sub-sub-item 1
-
-(@)  A list whose numbering
-
-continues after
-
-(@)  an interruption
-
-# Tables
-
-| Right | Left | Default | Center |
-
-|------:|:-----|---------|:------:|
-
-|   12  |  12  |    12   |    12  |
-
-|  123  |  123 |   123   |   123  |
-
-|    1  |    1 |     1   |     1  |
-
-# Source Code
-
-Use ``` to delimit blocks of source code:
-
-```
-
-code
-
-```
-
-Add a language to syntax highlight code blocks:
-
-```{r}
-
-1 + 1
-
-```
-
-```{r}
-
-cars
-
-```
-
-```{r}
-
-plot(cars)
-
-```
--->

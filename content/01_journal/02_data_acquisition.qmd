@@ -1,8 +1,181 @@
 ---
 title: "Data Acquisition"
-author: "Joschka Schwarz"
+author: "Sucheth Shenoy"
 ---
 
-::: callout-note
-You can delete everything in here and start fresh.
-:::
+# Task 2.1: Get data from API - arXiv
+
+## Load Libraries
+```{r}
+library(rvest)
+library(stringr)
+library(tibble)
+```
+
+## Define the URL for the arXiv search page
+```{r}
+topic <- "Koopman+Operator+Theory"  # Replace with the topic you're interested in
+search_url <- paste0("https://arxiv.org/search/?query=", topic, "&searchtype=all&order=-announced_date_first&size=50")
+```
+
+## Read the HTML content of the search page
+```{r}
+search_page <- read_html(search_url)
+```
+
+## Extract the URLs of the search results (research papers)
+```{r}
+paper_urls <- search_page %>%
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  str_subset(pattern = "abs")
+```
+
+## Create an empty Tibble to store data
+```{r}
+papers_info <- tibble(
+  title = character(),
+  url = character(),
+  abstract = character(),
+  author_names = character(),
+  submission_date = character()
+)
+```
+
+## Extract data for each research paper
+```{r}
+for (url in paper_urls) {
+  paper_page <- read_html(url)
+  title <- paper_page %>%
+    html_node("title") %>%
+    html_text() %>%
+    gsub("\\[\\d+\\.\\d+\\]", "", .)
+  
+  abstract <- paper_page %>%
+    html_node("meta[property='og:description']") %>%
+    html_attr("content")
+  
+  author_names <- paper_page %>%
+    html_node(".authors") %>%
+    html_text() %>%
+    gsub("Authors:", "", .) %>%
+    trimws()
+    
+  submission_date <- paper_page %>%
+    html_node(".dateline") %>%
+    html_text() %>%
+    gsub("\\[Submitted on |\\]", "", .) %>%
+    trimws()
+  
+  papers_info <- papers_info %>%
+    add_row(
+      title = title,
+      url = url,
+      abstract = abstract,
+      author_names = author_names,
+      submission_date = submission_date
+    )
+}
+```
+
+## Print the first 10 rows of the Tibble
+```{r}
+print(head(papers_info, 10))
+```
+
+# Task 2.2: Scrape competitor website (https://www.radon-bikes.de)
+
+## Load Libraries
+```{r}
+library(tidyverse) # Main Package - Loads dplyr, purrr, etc.
+library(rvest)     # HTML Hacking & Web Scraping
+library(xopen)     # Quickly opening URLs
+```
+
+## Collect Product Catalogues
+```{r}
+url_home        <- "https://www.radon-bikes.de/en"
+
+html_home       <- read_html(url_home)
+
+bike_categories_chr <- html_home %>%
+  html_elements(".megamenu a") %>%
+  html_attr("href") %>%
+  str_subset(pattern = "#|wear", negate = T) %>%
+  unique() %>%
+  str_c("https://www.radon-bikes.de", ., sep = "")
+```
+
+## Function to get Bike urls
+```{r}
+get_bike_urls <- function(url) {
+  
+  html_bike_category <- read_html(url)
+  
+  # Get the URLs
+  bike_url_chr  <- html_bike_category %>%
+    html_elements("a.a-button") %>%
+    html_attr("href") %>%
+    str_subset(pattern = "bikegrid|slush|instagram", negate = T) %>%
+    unique() %>%
+    str_c("https://www.radon-bikes.de", ., sep = "")
+  
+  return(bike_url_chr)
+  
+}
+```
+
+## Get Bike urls and create a Tibble
+```{r}
+bike_urls_chr <- map(bike_categories_chr, get_bike_urls) |>
+  flatten_chr() |>
+  unique()
+
+bike_urls_tbl <- bike_urls_chr |>
+  tibble::as_tibble_col(column_name = "url") |>
+  tidyr::separate_wider_regex(cols = url, patterns = c(".*de/en/", family   = "[^/]*", "/",
+                                                       category = "[^/]*", "/",
+                                                       model_type    = "[^/]*", "/",
+                                                       model = "[^/]*", "/",
+                                                       ".*"), cols_remove = F)
+```
+
+## Create a Tibble for the Bike Category: Hardtail
+```{r}
+bike_urls_hardtail_tbl <- bike_urls_tbl |>
+  filter(category == "hardtail")
+```
+
+## Function to get bike model data
+```{r}
+get_model_data <- function(url) {
+  
+  html_bike_model <- read_html(url)
+  
+  bike_price <- html_bike_model |>
+    html_element(".m-bikedetail__price--active") |>
+    html_text() |>
+    parse_number()
+  
+  bike_data <- tibble(url   = url,
+                      price = bike_price)
+  
+  return(bike_data)
+  
+}
+```
+
+## Get bike model data for Hardtail category
+```{r}
+bike_model_data_tbl <- bike_urls_hardtail_tbl$url |> map_dfr(get_model_data)
+
+bike_model_data_joined_tbl <- bike_urls_hardtail_tbl |> 
+  left_join(bike_model_data_tbl, by = join_by("url"))
+```
+
+## Print the first 10 rows of the Tibble
+```{r}
+print(head(bike_model_data_joined_tbl, 10))
+```
+
+

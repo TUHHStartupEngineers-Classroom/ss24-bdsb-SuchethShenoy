@@ -1,5 +1,19 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Lab Journal",
+    "section": "",
+    "text": "This is a template example for lab journaling. Students in the data science courses at the Institute of Entrepreneurship will use this template to learn R for business analytics. Students can replace this text as they wish."
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "My Lab Journal",
+    "section": "How to use",
+    "text": "How to use\n\nAccept the assignment and get your own github repo.\nBlog/journal what you are doing in R, by editing the .qmd files.\nSee the links page for lots of helpful links on learning R.\nChange everything to make it your own.\nMake sure to render you website everytime before you want to upload changes"
+  },
+  {
     "objectID": "content/01_journal/01_tidyverse.html",
     "href": "content/01_journal/01_tidyverse.html",
     "title": "Tidyverse",
@@ -14,17 +28,164 @@
     "text": "5.1 Sales by location (state)\n\nsales_by_location_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%\n  select(state, total_price) %&gt;%\n  group_by(state) %&gt;% \n  summarize(sales = sum(total_price)) %&gt;%\n  mutate(sales_text = scales::dollar(sales, big.mark = \".\", \n                                     decimal.mark = \",\", \n                                     prefix = \"\", \n                                     suffix = \" €\"))\n\n\nsales_by_location_tbl %&gt;%\n  ggplot(aes(x = state, y = sales)) +\n  geom_col(fill = \"#2DC6D6\") + # Use geom_col for a bar plot\n  geom_label(aes(label = sales_text)) + # Adding labels to the bars\n  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +\n  scale_y_continuous(labels = scales::dollar_format(big.mark = \".\", \n                                                    decimal.mark = \",\", \n                                                    prefix = \"\", \n                                                    suffix = \" €\")) +\n  labs(\n    title    = \"Revenue by location (state)\",\n    x = \"\", # Override defaults for x and y\n    y = \"Revenue\"\n  )"
   },
   {
-    "objectID": "content/01_journal/04_data_visualization.html",
-    "href": "content/01_journal/04_data_visualization.html",
-    "title": "Data Visualization",
-    "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
-  },
-  {
     "objectID": "content/01_journal/01_tidyverse.html#sales-by-location-state-and-year",
     "href": "content/01_journal/01_tidyverse.html#sales-by-location-state-and-year",
     "title": "Tidyverse",
     "section": "\n5.2 Sales by location (state) and year",
     "text": "5.2 Sales by location (state) and year\n\nsales_by_year_location_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%\n  select(order_date, total_price, state) %&gt;%\n  mutate(year = year(order_date)) %&gt;%\n  group_by(year, state) %&gt;%\n  summarise(sales = sum(total_price)) %&gt;%\n  ungroup() %&gt;%\n  mutate(sales_text = scales::dollar(sales, big.mark = \".\", \n                                     decimal.mark = \",\", \n                                     prefix = \"\", \n                                     suffix = \" €\"))\n\n#&gt; `summarise()` has grouped output by 'year'. You can override using the\n#&gt; `.groups` argument.\n\n\n\nsales_by_year_location_tbl %&gt;%\n  ggplot(aes(x = year, y = sales, fill = state)) +\n  geom_col() + # Run up to here to get a stacked bar plot\n  facet_wrap(~ state) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +\n  scale_y_continuous(labels = scales::dollar_format(big.mark = \".\", \n                                                    decimal.mark = \",\", \n                                                    prefix = \"\", \n                                                    suffix = \" €\")) +\n  labs(\n    title = \"Revenue by year and location (state)\",\n    y = \"Revenue\",\n    fill = \"Location\" # Changes the legend name,\n  )"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html",
+    "href": "content/01_journal/02_data_acquisition.html",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "library(rvest)\nlibrary(stringr)\nlibrary(tibble)\n\n\n\ntopic &lt;- \"Koopman+Operator+Theory\"  # Replace with the topic you're interested in\nsearch_url &lt;- paste0(\"https://arxiv.org/search/?query=\", topic, \"&searchtype=all&order=-announced_date_first&size=50\")\n\n\n\nsearch_page &lt;- read_html(search_url)\n\n\n\npaper_urls &lt;- search_page %&gt;%\n  html_nodes(\"a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"abs\")\n\n\n\npapers_info &lt;- tibble(\n  title = character(),\n  url = character(),\n  abstract = character(),\n  author_names = character(),\n  submission_date = character()\n)\n\n\n\nfor (url in paper_urls) {\n  paper_page &lt;- read_html(url)\n  title &lt;- paper_page %&gt;%\n    html_node(\"title\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[\\\\d+\\\\.\\\\d+\\\\]\", \"\", .)\n  \n  abstract &lt;- paper_page %&gt;%\n    html_node(\"meta[property='og:description']\") %&gt;%\n    html_attr(\"content\")\n  \n  author_names &lt;- paper_page %&gt;%\n    html_node(\".authors\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"Authors:\", \"\", .) %&gt;%\n    trimws()\n    \n  submission_date &lt;- paper_page %&gt;%\n    html_node(\".dateline\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[Submitted on |\\\\]\", \"\", .) %&gt;%\n    trimws()\n  \n  papers_info &lt;- papers_info %&gt;%\n    add_row(\n      title = title,\n      url = url,\n      abstract = abstract,\n      author_names = author_names,\n      submission_date = submission_date\n    )\n}\n\n\n\nprint(head(papers_info, 10))\n\n#&gt; # A tibble: 10 × 5\n#&gt;    url                              title  abstract author_names submission_date\n#&gt;    &lt;chr&gt;                            &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;          \n#&gt;  1 https://arxiv.org/abs/2405.00627 [2405… \"Nonlin… Zexin Sun, … 1 May 2024     \n#&gt;  2 https://arxiv.org/abs/2404.09130 [2404… \"The es… Domenico Li… 14 Apr 2024    \n#&gt;  3 https://arxiv.org/abs/2404.02014 [2404… \"Dynami… Dipankar Ma… 2 Apr 2024     \n#&gt;  4 https://arxiv.org/abs/2404.00112 [2404… \"The Si… Brian Charl… 29 Mar 2024    \n#&gt;  5 https://arxiv.org/abs/2403.19297 [2403… \"We hav… Yuzuru Kato  28 Mar 2024    \n#&gt;  6 https://arxiv.org/abs/2403.16306 [2403… \"The mo… H. Harry As… 24 Mar 2024    \n#&gt;  7 https://arxiv.org/abs/2403.13366 [2403… \"In thi… Shahram Kho… 20 Mar 2024    \n#&gt;  8 https://arxiv.org/abs/2403.12335 [2403… \"Absenc… Indranil Na… 19 Mar 2024    \n#&gt;  9 https://arxiv.org/abs/2403.08965 [2403… \"The st… George Nehm… 13 Mar 2024    \n#&gt; 10 https://arxiv.org/abs/2403.02524 [2403… \"This p… Isao Ishika… 4 Mar 2024 (v1…"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#load-libraries",
+    "href": "content/01_journal/02_data_acquisition.html#load-libraries",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "library(rvest)\nlibrary(stringr)\nlibrary(tibble)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#define-the-url-for-the-arxiv-search-page",
+    "href": "content/01_journal/02_data_acquisition.html#define-the-url-for-the-arxiv-search-page",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "topic &lt;- \"Koopman+Operator+Theory\"  # Replace with the topic you're interested in\nsearch_url &lt;- paste0(\"https://arxiv.org/search/?query=\", topic, \"&searchtype=all&order=-announced_date_first&size=50\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#read-the-html-content-of-the-search-page",
+    "href": "content/01_journal/02_data_acquisition.html#read-the-html-content-of-the-search-page",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "search_page &lt;- read_html(search_url)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#extract-the-urls-of-the-search-results-research-papers",
+    "href": "content/01_journal/02_data_acquisition.html#extract-the-urls-of-the-search-results-research-papers",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "paper_urls &lt;- search_page %&gt;%\n  html_nodes(\"a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"abs\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#create-an-empty-tibble-to-store-data",
+    "href": "content/01_journal/02_data_acquisition.html#create-an-empty-tibble-to-store-data",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "papers_info &lt;- tibble(\n  title = character(),\n  url = character(),\n  abstract = character(),\n  author_names = character(),\n  submission_date = character()\n)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#extract-data-for-each-research-paper",
+    "href": "content/01_journal/02_data_acquisition.html#extract-data-for-each-research-paper",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "for (url in paper_urls) {\n  paper_page &lt;- read_html(url)\n  title &lt;- paper_page %&gt;%\n    html_node(\"title\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[\\\\d+\\\\.\\\\d+\\\\]\", \"\", .)\n  \n  abstract &lt;- paper_page %&gt;%\n    html_node(\"meta[property='og:description']\") %&gt;%\n    html_attr(\"content\")\n  \n  author_names &lt;- paper_page %&gt;%\n    html_node(\".authors\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"Authors:\", \"\", .) %&gt;%\n    trimws()\n    \n  submission_date &lt;- paper_page %&gt;%\n    html_node(\".dateline\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[Submitted on |\\\\]\", \"\", .) %&gt;%\n    trimws()\n  \n  papers_info &lt;- papers_info %&gt;%\n    add_row(\n      title = title,\n      url = url,\n      abstract = abstract,\n      author_names = author_names,\n      submission_date = submission_date\n    )\n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble",
+    "href": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "print(head(papers_info, 10))\n\n#&gt; # A tibble: 10 × 5\n#&gt;    url                              title  abstract author_names submission_date\n#&gt;    &lt;chr&gt;                            &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;          \n#&gt;  1 https://arxiv.org/abs/2405.00627 [2405… \"Nonlin… Zexin Sun, … 1 May 2024     \n#&gt;  2 https://arxiv.org/abs/2404.09130 [2404… \"The es… Domenico Li… 14 Apr 2024    \n#&gt;  3 https://arxiv.org/abs/2404.02014 [2404… \"Dynami… Dipankar Ma… 2 Apr 2024     \n#&gt;  4 https://arxiv.org/abs/2404.00112 [2404… \"The Si… Brian Charl… 29 Mar 2024    \n#&gt;  5 https://arxiv.org/abs/2403.19297 [2403… \"We hav… Yuzuru Kato  28 Mar 2024    \n#&gt;  6 https://arxiv.org/abs/2403.16306 [2403… \"The mo… H. Harry As… 24 Mar 2024    \n#&gt;  7 https://arxiv.org/abs/2403.13366 [2403… \"In thi… Shahram Kho… 20 Mar 2024    \n#&gt;  8 https://arxiv.org/abs/2403.12335 [2403… \"Absenc… Indranil Na… 19 Mar 2024    \n#&gt;  9 https://arxiv.org/abs/2403.08965 [2403… \"The st… George Nehm… 13 Mar 2024    \n#&gt; 10 https://arxiv.org/abs/2403.02524 [2403… \"This p… Isao Ishika… 4 Mar 2024 (v1…"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#load-libraries-1",
+    "href": "content/01_journal/02_data_acquisition.html#load-libraries-1",
+    "title": "Data Acquisition",
+    "section": "\n2.1 Load Libraries",
+    "text": "2.1 Load Libraries\n\nlibrary(tidyverse) # Main Package - Loads dplyr, purrr, etc.\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ purrr     1.0.2\n#&gt; ✔ forcats   1.0.0     ✔ readr     2.1.5\n#&gt; ✔ ggplot2   3.5.1     ✔ tidyr     1.3.1\n#&gt; ✔ lubridate 1.9.3     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter()         masks stats::filter()\n#&gt; ✖ readr::guess_encoding() masks rvest::guess_encoding()\n#&gt; ✖ dplyr::lag()            masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(rvest)     # HTML Hacking & Web Scraping\nlibrary(xopen)     # Quickly opening URLs"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#collect-product-catalogues",
+    "href": "content/01_journal/02_data_acquisition.html#collect-product-catalogues",
+    "title": "Data Acquisition",
+    "section": "\n2.2 Collect Product Catalogues",
+    "text": "2.2 Collect Product Catalogues\n\nurl_home        &lt;- \"https://www.radon-bikes.de/en\"\n\nhtml_home       &lt;- read_html(url_home)\n\nbike_categories_chr &lt;- html_home %&gt;%\n  html_elements(\".megamenu a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"#|wear\", negate = T) %&gt;%\n  unique() %&gt;%\n  str_c(\"https://www.radon-bikes.de\", ., sep = \"\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#function-to-get-bike-urls",
+    "href": "content/01_journal/02_data_acquisition.html#function-to-get-bike-urls",
+    "title": "Data Acquisition",
+    "section": "\n2.3 Function to get Bike urls",
+    "text": "2.3 Function to get Bike urls\n\nget_bike_urls &lt;- function(url) {\n  \n  html_bike_category &lt;- read_html(url)\n  \n  # Get the URLs\n  bike_url_chr  &lt;- html_bike_category %&gt;%\n    html_elements(\"a.a-button\") %&gt;%\n    html_attr(\"href\") %&gt;%\n    str_subset(pattern = \"bikegrid|slush|instagram\", negate = T) %&gt;%\n    unique() %&gt;%\n    str_c(\"https://www.radon-bikes.de\", ., sep = \"\")\n  \n  return(bike_url_chr)\n  \n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#get-bike-urls-and-create-a-tibble",
+    "href": "content/01_journal/02_data_acquisition.html#get-bike-urls-and-create-a-tibble",
+    "title": "Data Acquisition",
+    "section": "\n2.4 Get Bike urls and create a Tibble",
+    "text": "2.4 Get Bike urls and create a Tibble\n\nbike_urls_chr &lt;- map(bike_categories_chr, get_bike_urls) |&gt;\n  flatten_chr() |&gt;\n  unique()\n\nbike_urls_tbl &lt;- bike_urls_chr |&gt;\n  tibble::as_tibble_col(column_name = \"url\") |&gt;\n  tidyr::separate_wider_regex(cols = url, patterns = c(\".*de/en/\", family   = \"[^/]*\", \"/\",\n                                                       category = \"[^/]*\", \"/\",\n                                                       model_type    = \"[^/]*\", \"/\",\n                                                       model = \"[^/]*\", \"/\",\n                                                       \".*\"), cols_remove = F)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#create-a-tibble-for-the-bike-category-hardtail",
+    "href": "content/01_journal/02_data_acquisition.html#create-a-tibble-for-the-bike-category-hardtail",
+    "title": "Data Acquisition",
+    "section": "\n2.5 Create a Tibble for the Bike Category: Hardtail",
+    "text": "2.5 Create a Tibble for the Bike Category: Hardtail\n\nbike_urls_hardtail_tbl &lt;- bike_urls_tbl |&gt;\n  filter(category == \"hardtail\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#function-to-get-bike-model-data",
+    "href": "content/01_journal/02_data_acquisition.html#function-to-get-bike-model-data",
+    "title": "Data Acquisition",
+    "section": "\n2.6 Function to get bike model data",
+    "text": "2.6 Function to get bike model data\n\nget_model_data &lt;- function(url) {\n  \n  html_bike_model &lt;- read_html(url)\n  \n  bike_price &lt;- html_bike_model |&gt;\n    html_element(\".m-bikedetail__price--active\") |&gt;\n    html_text() |&gt;\n    parse_number()\n  \n  bike_data &lt;- tibble(url   = url,\n                      price = bike_price)\n  \n  return(bike_data)\n  \n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#get-bike-model-data-for-hardtail-category",
+    "href": "content/01_journal/02_data_acquisition.html#get-bike-model-data-for-hardtail-category",
+    "title": "Data Acquisition",
+    "section": "\n2.7 Get bike model data for Hardtail category",
+    "text": "2.7 Get bike model data for Hardtail category\n\nbike_model_data_tbl &lt;- bike_urls_hardtail_tbl$url |&gt; map_dfr(get_model_data)\n\nbike_model_data_joined_tbl &lt;- bike_urls_hardtail_tbl |&gt; \n  left_join(bike_model_data_tbl, by = join_by(\"url\"))"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble-1",
+    "href": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble-1",
+    "title": "Data Acquisition",
+    "section": "\n2.8 Print the first 10 rows of the Tibble",
+    "text": "2.8 Print the first 10 rows of the Tibble\n\nprint(head(bike_model_data_joined_tbl, 10))\n\n#&gt; # A tibble: 10 × 6\n#&gt;    family       category model_type model                            url   price\n#&gt;    &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                            &lt;chr&gt; &lt;dbl&gt;\n#&gt;  1 mountainbike hardtail jealous    jealous-80-2024                  http… 2520.\n#&gt;  2 mountainbike hardtail jealous    jealous-90-2024                  http… 2856.\n#&gt;  3 mountainbike hardtail jealous    jealous-100-ea-2024              http… 4369.\n#&gt;  4 mountainbike hardtail jealous    jealous-80-2023                  http… 1848.\n#&gt;  5 mountainbike hardtail jealous    jealous-90-2023                  http… 2184.\n#&gt;  6 mountainbike hardtail jealous    jealous-100-2023                 http… 2772.\n#&gt;  7 mountainbike hardtail jealous    jealous-100-ea-2023              http… 3781.\n#&gt;  8 mountainbike hardtail jealous-al jealous-al-60-2024               http…  840.\n#&gt;  9 mountainbike hardtail jealous-al jealous-al-60-2024-petroleumblue http…  840.\n#&gt; 10 mountainbike hardtail jealous-al jealous-al-70-2024               http…  840."
+  },
+  {
+    "objectID": "content/03_other/06_links.html",
+    "href": "content/03_other/06_links.html",
+    "title": "Links",
+    "section": "",
+    "text": "R is a free open-source programming language that can be used for statistical analysis, data-simulation, graphing, and lots of other stuff. Another free program is R-studio, that provides a nice graphic interface for R. Download R first, then download R-studio. Both can run on PCs, Macs or Linux. Students will be learning R in the stats labs using the lab manual .\n\n\n\n\nGoogle is great, Google your problem\nStackoverflow is great, google will often take you there because someone has already asked your question, and someone else has answered, usually many people have answered your question many ways."
+  },
+  {
+    "objectID": "content/03_other/06_links.html#r-and-r-studio",
+    "href": "content/03_other/06_links.html#r-and-r-studio",
+    "title": "Links",
+    "section": "",
+    "text": "R is a free open-source programming language that can be used for statistical analysis, data-simulation, graphing, and lots of other stuff. Another free program is R-studio, that provides a nice graphic interface for R. Download R first, then download R-studio. Both can run on PCs, Macs or Linux. Students will be learning R in the stats labs using the lab manual ."
+  },
+  {
+    "objectID": "content/03_other/06_links.html#additional-r-resources",
+    "href": "content/03_other/06_links.html#additional-r-resources",
+    "title": "Links",
+    "section": "",
+    "text": "Google is great, Google your problem\nStackoverflow is great, google will often take you there because someone has already asked your question, and someone else has answered, usually many people have answered your question many ways."
+  },
+  {
+    "objectID": "content/02_notes/05_class_notes.html",
+    "href": "content/02_notes/05_class_notes.html",
+    "title": "Class Notes",
+    "section": "",
+    "text": "IMPORTANT: You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.\nThis is an .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header."
+  },
+  {
+    "objectID": "content/01_journal/03_data_wrangling.html",
+    "href": "content/01_journal/03_data_wrangling.html",
+    "title": "Data Wrangling",
+    "section": "",
+    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html",
+    "href": "content/01_journal/04_data_visualization.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
   }
 ]

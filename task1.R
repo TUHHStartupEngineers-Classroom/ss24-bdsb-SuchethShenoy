@@ -1,8 +1,9 @@
 library("tidyverse")
+library("readxl")
 
-bikes_tbl      <- read_excel(path = "content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/bikes.xlsx")
-orderlines_tbl <- read_excel("content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/orderlines.xlsx")
-bikeshops_tbl  <- read_excel("content/01_journal/tidyverse_files/01_bike_sales/01_raw_data/bikeshops.xlsx")
+bikes_tbl      <- read_excel(path = "content/01_journal/00_data/01_bike_sales/01_raw_data/bikes.xlsx")
+orderlines_tbl <- read_excel("content/01_journal/00_data/01_bike_sales/01_raw_data/orderlines.xlsx")
+bikeshops_tbl  <- read_excel("content/01_journal/00_data/01_bike_sales/01_raw_data/bikeshops.xlsx")
 
 bike_orderlines_joined_tbl <- orderlines_tbl %>%
   left_join(bikes_tbl, by = c("product.id" = "bike.id")) %>%

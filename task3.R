@@ -1,47 +1,22 @@
----
-title: "Data Wrangling"
-author: "Sucheth Shenoy"
----
-
-# Load Libraries
-```{r}
 library(vroom)
 library(data.table)
-```
 
-# Read Data from tsv to tibble
-```{r}
-patent_tbl <- vroom(file="00_data/03_wrangling/Patent_data_reduced/patent.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
-assignee_tbl <- vroom(file="00_data/03_wrangling/Patent_data_reduced/assignee.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
-patent_assignee_tbl <- vroom(file="00_data/03_wrangling/Patent_data_reduced/patent_assignee.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
-uspc_tbl <- vroom(file="00_data/03_wrangling/Patent_data_reduced/uspc.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
-```
+patent_tbl <- vroom(file="content/01_journal/00_data/03_wrangling/Patent_data_reduced/patent.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
+assignee_tbl <- vroom(file="content/01_journal/00_data/03_wrangling/Patent_data_reduced/assignee.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
+patent_assignee_tbl <- vroom(file="content/01_journal/00_data/03_wrangling/Patent_data_reduced/patent_assignee.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
+uspc_tbl <- vroom(file="content/01_journal/00_data/03_wrangling/Patent_data_reduced/uspc.tsv", delim="\t", na=c("", "NA", "NULL"), show_col_types = FALSE)
 
-# Convert tibbles to data.table
-```{r}
 patent_dt <- as.data.table(patent_tbl)
 assignee_dt <- as.data.table(assignee_tbl)
 patent_assignee_dt <- as.data.table(patent_assignee_tbl)
 uspc_dt <- as.data.table(uspc_tbl)
-```
 
-# Patent Dominance
-List the 10 US companies with the most assigned/granted patents.
-```{r}
 patent_dominance_dt <- patent_assignee_dt[assignee_dt, on = .(assignee_id = id)][!is.na(organization)]
 patent_dominance_dt[, .(count = .N), by = organization][order(-count)][1:10]
-```
 
-# Recent Patent Activity
-List the top 10 companies with the most new granted patents for August 2014.
-```{r}
 patent_recent_activity_dt <- patent_dominance_dt[patent_dt, on = .(patent_id = id)][!is.na(organization)]
 patent_recent_activity_dt[format(date, "%Y-%m") == "2014-08", .(count = .N), by = organization][order(-count)][1:10]
-```
 
-# Innovation in Tech
-For the top 10 companies (worldwide) with the most patents, what are the top 5 USPTO tech main classes?
-```{r}
 uspc_dt[, patent_id := as.character(patent_id)]
 top_organizations <- patent_dominance_dt[, .(count = .N), by = organization][order(-count)][1:10]$organization
 
@@ -69,6 +44,3 @@ for (i in 1:length(result_list)) {
 
 # Convert the matrix to a data.table
 result_dt <- data.table(organization = rownames(result_matrix), result_matrix)
-result_dt
-```
-

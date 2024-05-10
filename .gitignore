@@ -42,3 +42,5 @@ vignettes/*.pdf
 *.utf8.md
 *.knit.md
 .DS_Store
+
+content/01_journal/00_data/*

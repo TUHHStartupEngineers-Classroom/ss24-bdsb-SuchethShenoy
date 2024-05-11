@@ -186,6 +186,69 @@
     "href": "content/01_journal/04_data_visualization.html",
     "title": "Data Visualization",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "library(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.5\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(ggrepel)\nlibrary(scales)\n\n#&gt; \n#&gt; Attaching package: 'scales'\n#&gt; \n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     discard\n#&gt; \n#&gt; The following object is masked from 'package:readr':\n#&gt; \n#&gt;     col_factor\n\n\n\n\ncovid_data_tbl &lt;- read_csv(\"https://covid.ourworldindata.org/data/owid-covid-data.csv\")\n\n#&gt; Rows: 397517 Columns: 67\n#&gt; ── Column specification ────────────────────────────────────────────────────────\n#&gt; Delimiter: \",\"\n#&gt; chr   (4): iso_code, continent, location, tests_units\n#&gt; dbl  (62): total_cases, new_cases, new_cases_smoothed, total_deaths, new_dea...\n#&gt; date  (1): date\n#&gt; \n#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.\n#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n\n\n\ncovid_data_tbl_processed &lt;- covid_data_tbl %&gt;% \n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  )) %&gt;%\n  distinct()\n\n# Filter data for specified countries\ncountries &lt;- c(\"Germany\", \"UK\", \"France\", \"Spain\", \"USA\")\nfiltered_data &lt;- covid_data_tbl_processed %&gt;%\n  filter(location %in% countries) %&gt;%\n  filter(total_cases &gt; 0) # Filter out rows with zero total cases\n\n\n\n# Custom color palette\ncustom_colors &lt;- c(\"#1f78b4\", \"#33a02c\", \"#e31a1c\", \"#ff7f00\", \"#6a3d9a\")\n\n# Plot the time course of cumulative cases\nggplot(filtered_data, aes(x = as.Date(date), y = total_cases/1e6, color = location)) +\n  geom_line(size = 0.75) +\n  scale_y_continuous(labels = scales::comma, breaks = seq(0, 125, by = 25), limits = c(0, 125), expand = expansion(mult = c(0, 0.1))) +\n  scale_x_date(date_labels = \"%b '%y\", date_breaks = \"1 month\") +\n  scale_color_manual(values = custom_colors) +\n  labs(x = \"Date\", y = \"Cumulative Cases (Millions)\", color = \"Country\",\n       title = \"COVID-19 confirmed cases worldwide\",\n       subtitle = \"As of 11/05/2024\") +\n  expand_limits(y = 0) +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.5)) +\n  geom_label_repel(data = subset(filtered_data, date == max(date)), \n                     aes(label = total_cases/1e6), \n                     size = 3,\n                     box.padding = 0.5,\n                     point.padding = 0.1)\n\n#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\n#&gt; ℹ Please use `linewidth` instead."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-libraries",
+    "href": "content/01_journal/04_data_visualization.html#load-libraries",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "library(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.5\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(ggrepel)\nlibrary(scales)\n\n#&gt; \n#&gt; Attaching package: 'scales'\n#&gt; \n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     discard\n#&gt; \n#&gt; The following object is masked from 'package:readr':\n#&gt; \n#&gt;     col_factor"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-data",
+    "href": "content/01_journal/04_data_visualization.html#load-data",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "covid_data_tbl &lt;- read_csv(\"https://covid.ourworldindata.org/data/owid-covid-data.csv\")\n\n#&gt; Rows: 397517 Columns: 67\n#&gt; ── Column specification ────────────────────────────────────────────────────────\n#&gt; Delimiter: \",\"\n#&gt; chr   (4): iso_code, continent, location, tests_units\n#&gt; dbl  (62): total_cases, new_cases, new_cases_smoothed, total_deaths, new_dea...\n#&gt; date  (1): date\n#&gt; \n#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.\n#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#data-wrangling",
+    "href": "content/01_journal/04_data_visualization.html#data-wrangling",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "covid_data_tbl_processed &lt;- covid_data_tbl %&gt;% \n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  )) %&gt;%\n  distinct()\n\n# Filter data for specified countries\ncountries &lt;- c(\"Germany\", \"UK\", \"France\", \"Spain\", \"USA\")\nfiltered_data &lt;- covid_data_tbl_processed %&gt;%\n  filter(location %in% countries) %&gt;%\n  filter(total_cases &gt; 0) # Filter out rows with zero total cases"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#data-visualization",
+    "href": "content/01_journal/04_data_visualization.html#data-visualization",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "# Custom color palette\ncustom_colors &lt;- c(\"#1f78b4\", \"#33a02c\", \"#e31a1c\", \"#ff7f00\", \"#6a3d9a\")\n\n# Plot the time course of cumulative cases\nggplot(filtered_data, aes(x = as.Date(date), y = total_cases/1e6, color = location)) +\n  geom_line(size = 0.75) +\n  scale_y_continuous(labels = scales::comma, breaks = seq(0, 125, by = 25), limits = c(0, 125), expand = expansion(mult = c(0, 0.1))) +\n  scale_x_date(date_labels = \"%b '%y\", date_breaks = \"1 month\") +\n  scale_color_manual(values = custom_colors) +\n  labs(x = \"Date\", y = \"Cumulative Cases (Millions)\", color = \"Country\",\n       title = \"COVID-19 confirmed cases worldwide\",\n       subtitle = \"As of 11/05/2024\") +\n  expand_limits(y = 0) +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.5)) +\n  geom_label_repel(data = subset(filtered_data, date == max(date)), \n                     aes(label = total_cases/1e6), \n                     size = 3,\n                     box.padding = 0.5,\n                     point.padding = 0.1)\n\n#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\n#&gt; ℹ Please use `linewidth` instead."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-libraries-1",
+    "href": "content/01_journal/04_data_visualization.html#load-libraries-1",
+    "title": "Data Visualization",
+    "section": "\n2.1 Load Libraries",
+    "text": "2.1 Load Libraries\n\nlibrary(ggplot2)\nlibrary(maps)\n\n#&gt; \n#&gt; Attaching package: 'maps'\n\n\n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     map"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-world-map-data",
+    "href": "content/01_journal/04_data_visualization.html#load-world-map-data",
+    "title": "Data Visualization",
+    "section": "\n2.2 Load world map data",
+    "text": "2.2 Load world map data\n\nworld &lt;- map_data(\"world\")"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#calculate-mortality-rate",
+    "href": "content/01_journal/04_data_visualization.html#calculate-mortality-rate",
+    "title": "Data Visualization",
+    "section": "\n2.3 Calculate Mortality Rate",
+    "text": "2.3 Calculate Mortality Rate\n\ncovid_mortality_tbl_processed &lt;- covid_data_tbl_processed %&gt;%\n  group_by(location) %&gt;%\n  summarise(mortality_rate = sum(total_deaths_per_million, na.rm = TRUE) /10000000) %&gt;%\n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  ))"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#combine-data",
+    "href": "content/01_journal/04_data_visualization.html#combine-data",
+    "title": "Data Visualization",
+    "section": "\n2.4 Combine Data",
+    "text": "2.4 Combine Data\n\nworld &lt;- left_join(world, covid_mortality_tbl_processed, by = c(\"region\" = \"location\"))"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-mortality-rate",
+    "href": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-mortality-rate",
+    "title": "Data Visualization",
+    "section": "\n2.5 Plot the world map with mortality rate",
+    "text": "2.5 Plot the world map with mortality rate\nI tried using geom_map, but the plot had no map in it and the issue could not be resolved. Hence, I have used an alternative approach to plot the map using geom_polygon.\n\nggplot(world, aes(x = long, y = lat, group = group, fill = mortality_rate)) +\n  geom_polygon(color = \"black\") +\n  labs(title = \"Confirmed COVID-19 Deaths relative to size of population\", fill = \"Mortality Rate\") +\n  scale_fill_gradient(low = \"red\", high = \"black\", na.value = \"gray\")"
   }
 ]

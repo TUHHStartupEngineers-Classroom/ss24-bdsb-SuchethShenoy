@@ -78,7 +78,7 @@ world <- map_data("world")
 ```{r}
 covid_mortality_tbl_processed <- covid_data_tbl_processed %>%
   group_by(location) %>%
-  summarise(mortality_rate = sum(total_deaths_per_million, na.rm = TRUE) /10000000) %>%
+  summarise(case_fatality_rate = sum(total_deaths, na.rm = TRUE) / sum(total_cases, na.rm = TRUE)) %>%
   mutate(location = case_when(
     location == "United Kingdom" ~ "UK",
     location == "United States" ~ "USA",
@@ -92,13 +92,13 @@ covid_mortality_tbl_processed <- covid_data_tbl_processed %>%
 world <- left_join(world, covid_mortality_tbl_processed, by = c("region" = "location"))
 ```
 
-## Plot the world map with mortality rate
+## Plot the world map with case-fatality rate
 I tried using geom_map, but the plot had no map in it and the issue could not be resolved.
 Hence, I have used an alternative approach to plot the map using geom_polygon.
 ```{r}
-ggplot(world, aes(x = long, y = lat, group = group, fill = mortality_rate)) +
+ggplot(world, aes(x = long, y = lat, group = group, fill = case_fatality_rate)) +
   geom_polygon(color = "black") +
-  labs(title = "Confirmed COVID-19 Deaths relative to size of population", fill = "Mortality Rate") +
+  labs(title = "Confirmed COVID-19 Deaths relative to number of Cases", fill = "Case Fatality Rate") +
   scale_fill_gradient(low = "red", high = "black", na.value = "gray")
 ```
 

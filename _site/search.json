@@ -1,5 +1,152 @@
 [
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "My Lab Journal",
+    "section": "",
+    "text": "Please find the assignment solutions in the Journal pages."
+  },
+  {
+    "objectID": "index.html#how-to-use",
+    "href": "index.html#how-to-use",
+    "title": "My Lab Journal",
+    "section": "How to use",
+    "text": "How to use\n\nAccept the assignment and get your own github repo.\nBlog/journal what you are doing in R, by editing the .qmd files.\nSee the links page for lots of helpful links on learning R.\nChange everything to make it your own.\nMake sure to render you website everytime before you want to upload changes"
+  },
+  {
+    "objectID": "content/01_journal/01_tidyverse.html",
+    "href": "content/01_journal/01_tidyverse.html",
+    "title": "Tidyverse",
+    "section": "",
+    "text": "library(\"tidyverse\")\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.5\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(\"readxl\")\nlibrary(\"lubridate\")"
+  },
+  {
+    "objectID": "content/01_journal/01_tidyverse.html#sales-by-location-state",
+    "href": "content/01_journal/01_tidyverse.html#sales-by-location-state",
+    "title": "Tidyverse",
+    "section": "\n5.1 Sales by location (state)",
+    "text": "5.1 Sales by location (state)\n\nsales_by_location_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%\n  select(state, total_price) %&gt;%\n  group_by(state) %&gt;% \n  summarize(sales = sum(total_price)) %&gt;%\n  mutate(sales_text = scales::dollar(sales, big.mark = \".\", \n                                     decimal.mark = \",\", \n                                     prefix = \"\", \n                                     suffix = \" €\"))\n\n\nsales_by_location_tbl %&gt;%\n  ggplot(aes(x = state, y = sales)) +\n  geom_col(fill = \"#2DC6D6\") + # Use geom_col for a bar plot\n  geom_label(aes(label = sales_text)) + # Adding labels to the bars\n  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +\n  scale_y_continuous(labels = scales::dollar_format(big.mark = \".\", \n                                                    decimal.mark = \",\", \n                                                    prefix = \"\", \n                                                    suffix = \" €\")) +\n  labs(\n    title    = \"Revenue by location (state)\",\n    x = \"\", # Override defaults for x and y\n    y = \"Revenue\"\n  )"
+  },
+  {
+    "objectID": "content/01_journal/01_tidyverse.html#sales-by-location-state-and-year",
+    "href": "content/01_journal/01_tidyverse.html#sales-by-location-state-and-year",
+    "title": "Tidyverse",
+    "section": "\n5.2 Sales by location (state) and year",
+    "text": "5.2 Sales by location (state) and year\n\nsales_by_year_location_tbl &lt;- bike_orderlines_wrangled_tbl %&gt;%\n  select(order_date, total_price, state) %&gt;%\n  mutate(year = year(order_date)) %&gt;%\n  group_by(year, state) %&gt;%\n  summarise(sales = sum(total_price)) %&gt;%\n  ungroup() %&gt;%\n  mutate(sales_text = scales::dollar(sales, big.mark = \".\", \n                                     decimal.mark = \",\", \n                                     prefix = \"\", \n                                     suffix = \" €\"))\n\n#&gt; `summarise()` has grouped output by 'year'. You can override using the\n#&gt; `.groups` argument.\n\n\n\nsales_by_year_location_tbl %&gt;%\n  ggplot(aes(x = year, y = sales, fill = state)) +\n  geom_col() + # Run up to here to get a stacked bar plot\n  facet_wrap(~ state) +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +\n  scale_y_continuous(labels = scales::dollar_format(big.mark = \".\", \n                                                    decimal.mark = \",\", \n                                                    prefix = \"\", \n                                                    suffix = \" €\")) +\n  labs(\n    title = \"Revenue by year and location (state)\",\n    y = \"Revenue\",\n    fill = \"Location\" # Changes the legend name,\n  )"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html",
+    "href": "content/01_journal/02_data_acquisition.html",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "library(rvest)\nlibrary(stringr)\nlibrary(tibble)\n\n\n\ntopic &lt;- \"Koopman+Operator+Theory\"  # Replace with the topic you're interested in\nsearch_url &lt;- paste0(\"https://arxiv.org/search/?query=\", topic, \"&searchtype=all&order=-announced_date_first&size=50\")\n\n\n\nsearch_page &lt;- read_html(search_url)\n\n\n\npaper_urls &lt;- search_page %&gt;%\n  html_nodes(\"a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"abs\")\n\n\n\npapers_info &lt;- tibble(\n  title = character(),\n  url = character(),\n  abstract = character(),\n  author_names = character(),\n  submission_date = character()\n)\n\n\n\nfor (url in paper_urls) {\n  paper_page &lt;- read_html(url)\n  title &lt;- paper_page %&gt;%\n    html_node(\"title\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[\\\\d+\\\\.\\\\d+\\\\]\", \"\", .)\n  \n  abstract &lt;- paper_page %&gt;%\n    html_node(\"meta[property='og:description']\") %&gt;%\n    html_attr(\"content\")\n  \n  author_names &lt;- paper_page %&gt;%\n    html_node(\".authors\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"Authors:\", \"\", .) %&gt;%\n    trimws()\n    \n  submission_date &lt;- paper_page %&gt;%\n    html_node(\".dateline\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[Submitted on |\\\\]\", \"\", .) %&gt;%\n    trimws()\n  \n  papers_info &lt;- papers_info %&gt;%\n    add_row(\n      title = title,\n      url = url,\n      abstract = abstract,\n      author_names = author_names,\n      submission_date = submission_date\n    )\n}\n\n\n\nprint(head(papers_info, 10))\n\n#&gt; # A tibble: 10 × 5\n#&gt;    title                             url   abstract author_names submission_date\n#&gt;    &lt;chr&gt;                             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;          \n#&gt;  1 \" Koopman-based Deep Learning fo… http… \"Nonlin… Zexin Sun, … 1 May 2024     \n#&gt;  2 \" Thermodynamics of chaotic rela… http… \"The es… Domenico Li… 14 Apr 2024    \n#&gt;  3 \" On the Effect of Quantization … http… \"Dynami… Dipankar Ma… 2 Apr 2024     \n#&gt;  4 \" An SVD-like Decomposition of B… http… \"The Si… Brian Charl… 29 Mar 2024    \n#&gt;  5 \" Quantum asymptotic amplitude f… http… \"We hav… Yuzuru Kato  28 Mar 2024    \n#&gt;  6 \" Control-Coherent Koopman Model… http… \"The mo… H. Harry As… 24 Mar 2024    \n#&gt;  7 \" Centroidal State Estimation ba… http… \"In thi… Shahram Kho… 20 Mar 2024    \n#&gt;  8 \" Temporally-Consistent Koopman … http… \"Absenc… Indranil Na… 19 Mar 2024    \n#&gt;  9 \" Deep Learning Based Dynamics I… http… \"The st… George Nehm… 13 Mar 2024    \n#&gt; 10 \" Koopman operators with intrins… http… \"This p… Isao Ishika… 4 Mar 2024 (v1…"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#load-libraries",
+    "href": "content/01_journal/02_data_acquisition.html#load-libraries",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "library(rvest)\nlibrary(stringr)\nlibrary(tibble)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#define-the-url-for-the-arxiv-search-page",
+    "href": "content/01_journal/02_data_acquisition.html#define-the-url-for-the-arxiv-search-page",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "topic &lt;- \"Koopman+Operator+Theory\"  # Replace with the topic you're interested in\nsearch_url &lt;- paste0(\"https://arxiv.org/search/?query=\", topic, \"&searchtype=all&order=-announced_date_first&size=50\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#read-the-html-content-of-the-search-page",
+    "href": "content/01_journal/02_data_acquisition.html#read-the-html-content-of-the-search-page",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "search_page &lt;- read_html(search_url)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#extract-the-urls-of-the-search-results-research-papers",
+    "href": "content/01_journal/02_data_acquisition.html#extract-the-urls-of-the-search-results-research-papers",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "paper_urls &lt;- search_page %&gt;%\n  html_nodes(\"a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"abs\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#create-an-empty-tibble-to-store-data",
+    "href": "content/01_journal/02_data_acquisition.html#create-an-empty-tibble-to-store-data",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "papers_info &lt;- tibble(\n  title = character(),\n  url = character(),\n  abstract = character(),\n  author_names = character(),\n  submission_date = character()\n)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#extract-data-for-each-research-paper",
+    "href": "content/01_journal/02_data_acquisition.html#extract-data-for-each-research-paper",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "for (url in paper_urls) {\n  paper_page &lt;- read_html(url)\n  title &lt;- paper_page %&gt;%\n    html_node(\"title\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[\\\\d+\\\\.\\\\d+\\\\]\", \"\", .)\n  \n  abstract &lt;- paper_page %&gt;%\n    html_node(\"meta[property='og:description']\") %&gt;%\n    html_attr(\"content\")\n  \n  author_names &lt;- paper_page %&gt;%\n    html_node(\".authors\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"Authors:\", \"\", .) %&gt;%\n    trimws()\n    \n  submission_date &lt;- paper_page %&gt;%\n    html_node(\".dateline\") %&gt;%\n    html_text() %&gt;%\n    gsub(\"\\\\[Submitted on |\\\\]\", \"\", .) %&gt;%\n    trimws()\n  \n  papers_info &lt;- papers_info %&gt;%\n    add_row(\n      title = title,\n      url = url,\n      abstract = abstract,\n      author_names = author_names,\n      submission_date = submission_date\n    )\n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble",
+    "href": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble",
+    "title": "Data Acquisition",
+    "section": "",
+    "text": "print(head(papers_info, 10))\n\n#&gt; # A tibble: 10 × 5\n#&gt;    title                             url   abstract author_names submission_date\n#&gt;    &lt;chr&gt;                             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;          \n#&gt;  1 \" Koopman-based Deep Learning fo… http… \"Nonlin… Zexin Sun, … 1 May 2024     \n#&gt;  2 \" Thermodynamics of chaotic rela… http… \"The es… Domenico Li… 14 Apr 2024    \n#&gt;  3 \" On the Effect of Quantization … http… \"Dynami… Dipankar Ma… 2 Apr 2024     \n#&gt;  4 \" An SVD-like Decomposition of B… http… \"The Si… Brian Charl… 29 Mar 2024    \n#&gt;  5 \" Quantum asymptotic amplitude f… http… \"We hav… Yuzuru Kato  28 Mar 2024    \n#&gt;  6 \" Control-Coherent Koopman Model… http… \"The mo… H. Harry As… 24 Mar 2024    \n#&gt;  7 \" Centroidal State Estimation ba… http… \"In thi… Shahram Kho… 20 Mar 2024    \n#&gt;  8 \" Temporally-Consistent Koopman … http… \"Absenc… Indranil Na… 19 Mar 2024    \n#&gt;  9 \" Deep Learning Based Dynamics I… http… \"The st… George Nehm… 13 Mar 2024    \n#&gt; 10 \" Koopman operators with intrins… http… \"This p… Isao Ishika… 4 Mar 2024 (v1…"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#load-libraries-1",
+    "href": "content/01_journal/02_data_acquisition.html#load-libraries-1",
+    "title": "Data Acquisition",
+    "section": "\n2.1 Load Libraries",
+    "text": "2.1 Load Libraries\n\nlibrary(tidyverse) # Main Package - Loads dplyr, purrr, etc.\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ purrr     1.0.2\n#&gt; ✔ forcats   1.0.0     ✔ readr     2.1.5\n#&gt; ✔ ggplot2   3.5.1     ✔ tidyr     1.3.1\n#&gt; ✔ lubridate 1.9.3     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter()         masks stats::filter()\n#&gt; ✖ readr::guess_encoding() masks rvest::guess_encoding()\n#&gt; ✖ dplyr::lag()            masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(rvest)     # HTML Hacking & Web Scraping\nlibrary(xopen)     # Quickly opening URLs"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#collect-product-catalogues",
+    "href": "content/01_journal/02_data_acquisition.html#collect-product-catalogues",
+    "title": "Data Acquisition",
+    "section": "\n2.2 Collect Product Catalogues",
+    "text": "2.2 Collect Product Catalogues\n\nurl_home        &lt;- \"https://www.radon-bikes.de/en\"\n\nhtml_home       &lt;- read_html(url_home)\n\nbike_categories_chr &lt;- html_home %&gt;%\n  html_elements(\".megamenu a\") %&gt;%\n  html_attr(\"href\") %&gt;%\n  str_subset(pattern = \"#|wear\", negate = T) %&gt;%\n  unique() %&gt;%\n  str_c(\"https://www.radon-bikes.de\", ., sep = \"\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#function-to-get-bike-urls",
+    "href": "content/01_journal/02_data_acquisition.html#function-to-get-bike-urls",
+    "title": "Data Acquisition",
+    "section": "\n2.3 Function to get Bike urls",
+    "text": "2.3 Function to get Bike urls\n\nget_bike_urls &lt;- function(url) {\n  \n  html_bike_category &lt;- read_html(url)\n  \n  # Get the URLs\n  bike_url_chr  &lt;- html_bike_category %&gt;%\n    html_elements(\"a.a-button\") %&gt;%\n    html_attr(\"href\") %&gt;%\n    str_subset(pattern = \"bikegrid|slush|instagram\", negate = T) %&gt;%\n    unique() %&gt;%\n    str_c(\"https://www.radon-bikes.de\", ., sep = \"\")\n  \n  return(bike_url_chr)\n  \n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#get-bike-urls-and-create-a-tibble",
+    "href": "content/01_journal/02_data_acquisition.html#get-bike-urls-and-create-a-tibble",
+    "title": "Data Acquisition",
+    "section": "\n2.4 Get Bike urls and create a Tibble",
+    "text": "2.4 Get Bike urls and create a Tibble\n\nbike_urls_chr &lt;- map(bike_categories_chr, get_bike_urls) |&gt;\n  flatten_chr() |&gt;\n  unique()\n\nbike_urls_tbl &lt;- bike_urls_chr |&gt;\n  tibble::as_tibble_col(column_name = \"url\") |&gt;\n  tidyr::separate_wider_regex(cols = url, patterns = c(\".*de/en/\", family   = \"[^/]*\", \"/\",\n                                                       category = \"[^/]*\", \"/\",\n                                                       model_type    = \"[^/]*\", \"/\",\n                                                       model = \"[^/]*\", \"/\",\n                                                       \".*\"), cols_remove = F)"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#create-a-tibble-for-the-bike-category-hardtail",
+    "href": "content/01_journal/02_data_acquisition.html#create-a-tibble-for-the-bike-category-hardtail",
+    "title": "Data Acquisition",
+    "section": "\n2.5 Create a Tibble for the Bike Category: Hardtail",
+    "text": "2.5 Create a Tibble for the Bike Category: Hardtail\n\nbike_urls_hardtail_tbl &lt;- bike_urls_tbl |&gt;\n  filter(category == \"hardtail\")"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#function-to-get-bike-model-data",
+    "href": "content/01_journal/02_data_acquisition.html#function-to-get-bike-model-data",
+    "title": "Data Acquisition",
+    "section": "\n2.6 Function to get bike model data",
+    "text": "2.6 Function to get bike model data\n\nget_model_data &lt;- function(url) {\n  \n  html_bike_model &lt;- read_html(url)\n  \n  bike_price &lt;- html_bike_model |&gt;\n    html_element(\".m-bikedetail__price--active\") |&gt;\n    html_text() |&gt;\n    parse_number()\n  \n  bike_data &lt;- tibble(url   = url,\n                      price = bike_price)\n  \n  return(bike_data)\n  \n}"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#get-bike-model-data-for-hardtail-category",
+    "href": "content/01_journal/02_data_acquisition.html#get-bike-model-data-for-hardtail-category",
+    "title": "Data Acquisition",
+    "section": "\n2.7 Get bike model data for Hardtail category",
+    "text": "2.7 Get bike model data for Hardtail category\n\nbike_model_data_tbl &lt;- bike_urls_hardtail_tbl$url |&gt; map_dfr(get_model_data)\n\nbike_model_data_joined_tbl &lt;- bike_urls_hardtail_tbl |&gt; \n  left_join(bike_model_data_tbl, by = join_by(\"url\"))"
+  },
+  {
+    "objectID": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble-1",
+    "href": "content/01_journal/02_data_acquisition.html#print-the-first-10-rows-of-the-tibble-1",
+    "title": "Data Acquisition",
+    "section": "\n2.8 Print the first 10 rows of the Tibble",
+    "text": "2.8 Print the first 10 rows of the Tibble\n\nprint(head(bike_model_data_joined_tbl, 10))\n\n#&gt; # A tibble: 10 × 6\n#&gt;    family       category model_type model                            url   price\n#&gt;    &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                            &lt;chr&gt; &lt;dbl&gt;\n#&gt;  1 mountainbike hardtail jealous    jealous-80-2024                  http… 2520.\n#&gt;  2 mountainbike hardtail jealous    jealous-90-2024                  http… 2856.\n#&gt;  3 mountainbike hardtail jealous    jealous-100-ea-2024              http… 4369.\n#&gt;  4 mountainbike hardtail jealous    jealous-80-2023                  http… 1848.\n#&gt;  5 mountainbike hardtail jealous    jealous-90-2023                  http… 2184.\n#&gt;  6 mountainbike hardtail jealous    jealous-100-2023                 http… 2772.\n#&gt;  7 mountainbike hardtail jealous    jealous-100-ea-2023              http… 3781.\n#&gt;  8 mountainbike hardtail jealous-al jealous-al-60-2024               http…  840.\n#&gt;  9 mountainbike hardtail jealous-al jealous-al-60-2024-petroleumblue http…  840.\n#&gt; 10 mountainbike hardtail jealous-al jealous-al-70-2024               http…  840."
+  },
+  {
     "objectID": "content/03_other/06_links.html",
     "href": "content/03_other/06_links.html",
     "title": "Links",
@@ -7,39 +154,18 @@
     "text": "R is a free open-source programming language that can be used for statistical analysis, data-simulation, graphing, and lots of other stuff. Another free program is R-studio, that provides a nice graphic interface for R. Download R first, then download R-studio. Both can run on PCs, Macs or Linux. Students will be learning R in the stats labs using the lab manual .\n\n\n\n\nGoogle is great, Google your problem\nStackoverflow is great, google will often take you there because someone has already asked your question, and someone else has answered, usually many people have answered your question many ways."
   },
   {
-    "objectID": "content/01_journal/03_data_wrangling.html",
-    "href": "content/01_journal/03_data_wrangling.html",
-    "title": "Data Wrangling",
+    "objectID": "content/03_other/06_links.html#r-and-r-studio",
+    "href": "content/03_other/06_links.html#r-and-r-studio",
+    "title": "Links",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "R is a free open-source programming language that can be used for statistical analysis, data-simulation, graphing, and lots of other stuff. Another free program is R-studio, that provides a nice graphic interface for R. Download R first, then download R-studio. Both can run on PCs, Macs or Linux. Students will be learning R in the stats labs using the lab manual ."
   },
   {
-    "objectID": "content/01_journal/04_data_visualization.html",
-    "href": "content/01_journal/04_data_visualization.html",
-    "title": "Data Visualization",
+    "objectID": "content/03_other/06_links.html#additional-r-resources",
+    "href": "content/03_other/06_links.html#additional-r-resources",
+    "title": "Links",
     "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
-  },
-  {
-    "objectID": "content/01_journal/01_tidyverse.html",
-    "href": "content/01_journal/01_tidyverse.html",
-    "title": "Tidyverse",
-    "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh.\nThis is a .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
-  },
-  {
-    "objectID": "content/01_journal/01_tidyverse.html#header-2",
-    "href": "content/01_journal/01_tidyverse.html#header-2",
-    "title": "Tidyverse",
-    "section": "\n2.1 Header 2",
-    "text": "2.1 Header 2\nHeader 3\nHeader 4\nHeader 5\nHeader 6"
-  },
-  {
-    "objectID": "content/01_journal/02_data_acquisition.html",
-    "href": "content/01_journal/02_data_acquisition.html",
-    "title": "Data Acquisition",
-    "section": "",
-    "text": "Note\n\n\n\nYou can delete everything in here and start fresh."
+    "text": "Google is great, Google your problem\nStackoverflow is great, google will often take you there because someone has already asked your question, and someone else has answered, usually many people have answered your question many ways."
   },
   {
     "objectID": "content/02_notes/05_class_notes.html",
@@ -49,17 +175,87 @@
     "text": "IMPORTANT: You can delete everything in here and start fresh. You might want to start by not deleting anything above this line until you know what that stuff is doing.\nThis is an .qmd file. It is plain text with special features. Any time you write just like this, it will be compiled to normal text in the website. If you put a # in front of your text, it will create a top level-header."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "My Lab Journal",
+    "objectID": "content/01_journal/03_data_wrangling.html",
+    "href": "content/01_journal/03_data_wrangling.html",
+    "title": "Data Wrangling",
     "section": "",
-    "text": "This is a template example for lab journaling. Students in the data science courses at the Institute of Entrepreneurship will use this template to learn R for business analytics. Students can replace this text as they wish."
+    "text": "1 Load Libraries\n\nlibrary(vroom)\nlibrary(data.table)\n\n\n2 Read Data from tsv to tibble\n\npatent_tbl &lt;- vroom(file=\"00_data/03_wrangling/Patent_data_reduced/patent.tsv\", delim=\"\\t\", na=c(\"\", \"NA\", \"NULL\"), show_col_types = FALSE)\nassignee_tbl &lt;- vroom(file=\"00_data/03_wrangling/Patent_data_reduced/assignee.tsv\", delim=\"\\t\", na=c(\"\", \"NA\", \"NULL\"), show_col_types = FALSE)\npatent_assignee_tbl &lt;- vroom(file=\"00_data/03_wrangling/Patent_data_reduced/patent_assignee.tsv\", delim=\"\\t\", na=c(\"\", \"NA\", \"NULL\"), show_col_types = FALSE)\nuspc_tbl &lt;- vroom(file=\"00_data/03_wrangling/Patent_data_reduced/uspc.tsv\", delim=\"\\t\", na=c(\"\", \"NA\", \"NULL\"), show_col_types = FALSE)\n\n\n3 Convert tibbles to data.table\n\npatent_dt &lt;- as.data.table(patent_tbl)\nassignee_dt &lt;- as.data.table(assignee_tbl)\npatent_assignee_dt &lt;- as.data.table(patent_assignee_tbl)\nuspc_dt &lt;- as.data.table(uspc_tbl)\n\n\n4 Patent Dominance\nList the 10 US companies with the most assigned/granted patents.\n\npatent_dominance_dt &lt;- patent_assignee_dt[assignee_dt, on = .(assignee_id = id)][!is.na(organization)]\npatent_dominance_dt[, .(count = .N), by = organization][order(-count)][1:10]\n\n\n\n  \n\n\n\n\n5 Recent Patent Activity\nList the top 10 companies with the most new granted patents for August 2014.\n\npatent_recent_activity_dt &lt;- patent_dominance_dt[patent_dt, on = .(patent_id = id)][!is.na(organization)]\npatent_recent_activity_dt[format(date, \"%Y-%m\") == \"2014-08\", .(count = .N), by = organization][order(-count)][1:10]\n\n\n\n  \n\n\n\n\n6 Innovation in Tech\nFor the top 10 companies (worldwide) with the most patents, what are the top 5 USPTO tech main classes?\n\nuspc_dt[, patent_id := as.character(patent_id)]\ntop_organizations &lt;- patent_dominance_dt[, .(count = .N), by = organization][order(-count)][1:10]$organization\n\npatent_innovation_dt &lt;- patent_dominance_dt[uspc_dt, on = .(patent_id)][!is.na(organization)]\n\nresult_list &lt;- list()\nfor (org in top_organizations) {\n  # Filter data for the current organization\n  org_data &lt;- patent_innovation_dt[organization == org]\n  \n  # Calculate the top 5 mainclass_id for the current organization\n  top_mainclass &lt;- org_data[, .(count = .N), by = mainclass_id][order(-count)][1:5]$mainclass_id\n  \n  # Store the result in the list\n  result_list[[org]] &lt;- top_mainclass\n}\n\n# Create a matrix to hold the top 5 mainclass_id values for each organization\nresult_matrix &lt;- matrix(NA_character_, nrow = 10, ncol = 5, dimnames = list(top_organizations, paste0(\"Top_Mainclass_\", 1:5)))\n\n# Fill in the matrix with the top 5 mainclass_id values for each organization\nfor (i in 1:length(result_list)) {\n  result_matrix[i, 1:length(result_list[[i]])] &lt;- result_list[[i]]\n}\n\n# Convert the matrix to a data.table\nresult_dt &lt;- data.table(organization = rownames(result_matrix), result_matrix)\nresult_dt"
   },
   {
-    "objectID": "index.html#how-to-use",
-    "href": "index.html#how-to-use",
-    "title": "My Lab Journal",
-    "section": "How to use",
-    "text": "How to use\n\nAccept the assignment and get your own github repo.\nBlog/journal what you are doing in R, by editing the .qmd files.\nSee the links page for lots of helpful links on learning R.\nChange everything to make it your own.\nMake sure to render you website everytime before you want to upload changes"
+    "objectID": "content/01_journal/04_data_visualization.html",
+    "href": "content/01_journal/04_data_visualization.html",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "library(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.5\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(ggrepel)\nlibrary(scales)\n\n#&gt; \n#&gt; Attaching package: 'scales'\n#&gt; \n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     discard\n#&gt; \n#&gt; The following object is masked from 'package:readr':\n#&gt; \n#&gt;     col_factor\n\n\n\n\ncovid_data_tbl &lt;- read_csv(\"https://covid.ourworldindata.org/data/owid-covid-data.csv\")\n\n#&gt; Rows: 399276 Columns: 67\n#&gt; ── Column specification ────────────────────────────────────────────────────────\n#&gt; Delimiter: \",\"\n#&gt; chr   (4): iso_code, continent, location, tests_units\n#&gt; dbl  (62): total_cases, new_cases, new_cases_smoothed, total_deaths, new_dea...\n#&gt; date  (1): date\n#&gt; \n#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.\n#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.\n\n\n\n\ncovid_data_tbl_processed &lt;- covid_data_tbl %&gt;% \n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  )) %&gt;%\n  distinct()\n\n# Filter data for specified countries\ncountries &lt;- c(\"Germany\", \"UK\", \"France\", \"Spain\", \"USA\")\nfiltered_data &lt;- covid_data_tbl_processed %&gt;%\n  filter(location %in% countries) %&gt;%\n  filter(total_cases &gt; 0) # Filter out rows with zero total cases\n\n\n\n# Custom color palette\ncustom_colors &lt;- c(\"#1f78b4\", \"#33a02c\", \"#e31a1c\", \"#ff7f00\", \"#6a3d9a\")\n\n# Plot the time course of cumulative cases\nggplot(filtered_data, aes(x = as.Date(date), y = total_cases/1e6, color = location)) +\n  geom_line(size = 0.75) +\n  scale_y_continuous(labels = scales::comma, breaks = seq(0, 125, by = 25), limits = c(0, 125), expand = expansion(mult = c(0, 0.1))) +\n  scale_x_date(date_labels = \"%b '%y\", date_breaks = \"1 month\") +\n  scale_color_manual(values = custom_colors) +\n  labs(x = \"Date\", y = \"Cumulative Cases (Millions)\", color = \"Country\",\n       title = \"COVID-19 confirmed cases worldwide\",\n       subtitle = \"As of 11/05/2024\") +\n  expand_limits(y = 0) +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.5)) +\n  geom_label_repel(data = subset(filtered_data, date == max(date)), \n                     aes(label = total_cases/1e6), \n                     size = 3,\n                     box.padding = 0.5,\n                     point.padding = 0.1)\n\n#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\n#&gt; ℹ Please use `linewidth` instead."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-libraries",
+    "href": "content/01_journal/04_data_visualization.html#load-libraries",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "library(tidyverse)\n\n#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──\n#&gt; ✔ dplyr     1.1.4     ✔ readr     2.1.5\n#&gt; ✔ forcats   1.0.0     ✔ stringr   1.5.1\n#&gt; ✔ ggplot2   3.5.1     ✔ tibble    3.2.1\n#&gt; ✔ lubridate 1.9.3     ✔ tidyr     1.3.1\n#&gt; ✔ purrr     1.0.2     \n#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──\n#&gt; ✖ dplyr::filter() masks stats::filter()\n#&gt; ✖ dplyr::lag()    masks stats::lag()\n#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors\n\nlibrary(ggrepel)\nlibrary(scales)\n\n#&gt; \n#&gt; Attaching package: 'scales'\n#&gt; \n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     discard\n#&gt; \n#&gt; The following object is masked from 'package:readr':\n#&gt; \n#&gt;     col_factor"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-data",
+    "href": "content/01_journal/04_data_visualization.html#load-data",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "covid_data_tbl &lt;- read_csv(\"https://covid.ourworldindata.org/data/owid-covid-data.csv\")\n\n#&gt; Rows: 399276 Columns: 67\n#&gt; ── Column specification ────────────────────────────────────────────────────────\n#&gt; Delimiter: \",\"\n#&gt; chr   (4): iso_code, continent, location, tests_units\n#&gt; dbl  (62): total_cases, new_cases, new_cases_smoothed, total_deaths, new_dea...\n#&gt; date  (1): date\n#&gt; \n#&gt; ℹ Use `spec()` to retrieve the full column specification for this data.\n#&gt; ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#data-wrangling",
+    "href": "content/01_journal/04_data_visualization.html#data-wrangling",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "covid_data_tbl_processed &lt;- covid_data_tbl %&gt;% \n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  )) %&gt;%\n  distinct()\n\n# Filter data for specified countries\ncountries &lt;- c(\"Germany\", \"UK\", \"France\", \"Spain\", \"USA\")\nfiltered_data &lt;- covid_data_tbl_processed %&gt;%\n  filter(location %in% countries) %&gt;%\n  filter(total_cases &gt; 0) # Filter out rows with zero total cases"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#data-visualization",
+    "href": "content/01_journal/04_data_visualization.html#data-visualization",
+    "title": "Data Visualization",
+    "section": "",
+    "text": "# Custom color palette\ncustom_colors &lt;- c(\"#1f78b4\", \"#33a02c\", \"#e31a1c\", \"#ff7f00\", \"#6a3d9a\")\n\n# Plot the time course of cumulative cases\nggplot(filtered_data, aes(x = as.Date(date), y = total_cases/1e6, color = location)) +\n  geom_line(size = 0.75) +\n  scale_y_continuous(labels = scales::comma, breaks = seq(0, 125, by = 25), limits = c(0, 125), expand = expansion(mult = c(0, 0.1))) +\n  scale_x_date(date_labels = \"%b '%y\", date_breaks = \"1 month\") +\n  scale_color_manual(values = custom_colors) +\n  labs(x = \"Date\", y = \"Cumulative Cases (Millions)\", color = \"Country\",\n       title = \"COVID-19 confirmed cases worldwide\",\n       subtitle = \"As of 11/05/2024\") +\n  expand_limits(y = 0) +\n  theme_minimal() +\n  theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 6.5)) +\n  geom_label_repel(data = subset(filtered_data, date == max(date)), \n                     aes(label = total_cases/1e6), \n                     size = 3,\n                     box.padding = 0.5,\n                     point.padding = 0.1)\n\n#&gt; Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.\n#&gt; ℹ Please use `linewidth` instead."
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-libraries-1",
+    "href": "content/01_journal/04_data_visualization.html#load-libraries-1",
+    "title": "Data Visualization",
+    "section": "\n2.1 Load Libraries",
+    "text": "2.1 Load Libraries\n\nlibrary(ggplot2)\nlibrary(maps)\n\n#&gt; \n#&gt; Attaching package: 'maps'\n\n\n#&gt; The following object is masked from 'package:purrr':\n#&gt; \n#&gt;     map"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#load-world-map-data",
+    "href": "content/01_journal/04_data_visualization.html#load-world-map-data",
+    "title": "Data Visualization",
+    "section": "\n2.2 Load world map data",
+    "text": "2.2 Load world map data\n\nworld &lt;- map_data(\"world\")"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#calculate-mortality-rate",
+    "href": "content/01_journal/04_data_visualization.html#calculate-mortality-rate",
+    "title": "Data Visualization",
+    "section": "\n2.3 Calculate Mortality Rate",
+    "text": "2.3 Calculate Mortality Rate\n\ncovid_mortality_tbl_processed &lt;- covid_data_tbl_processed %&gt;%\n  group_by(location) %&gt;%\n  summarise(case_fatality_rate = sum(total_deaths, na.rm = TRUE) / sum(total_cases, na.rm = TRUE)) %&gt;%\n  mutate(location = case_when(\n    location == \"United Kingdom\" ~ \"UK\",\n    location == \"United States\" ~ \"USA\",\n    location == \"Democratic Republic of Congo\" ~ \"Democratic Republic of the Congo\",\n    TRUE ~ location\n  ))"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#combine-data",
+    "href": "content/01_journal/04_data_visualization.html#combine-data",
+    "title": "Data Visualization",
+    "section": "\n2.4 Combine Data",
+    "text": "2.4 Combine Data\n\nworld &lt;- left_join(world, covid_mortality_tbl_processed, by = c(\"region\" = \"location\"))"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-mortality-rate",
+    "href": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-mortality-rate",
+    "title": "Data Visualization",
+    "section": "\n2.5 Plot the world map with mortality rate",
+    "text": "2.5 Plot the world map with mortality rate\nI tried using geom_map, but the plot had no map in it and the issue could not be resolved. Hence, I have used an alternative approach to plot the map using geom_polygon.\n\nggplot(world, aes(x = long, y = lat, group = group, fill = mortality_rate)) +\n  geom_polygon(color = \"black\") +\n  labs(title = \"Confirmed COVID-19 Deaths relative to size of population\", fill = \"Mortality Rate\") +\n  scale_fill_gradient(low = \"red\", high = \"black\", na.value = \"gray\")"
+  },
+  {
+    "objectID": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-case-fatality-rate",
+    "href": "content/01_journal/04_data_visualization.html#plot-the-world-map-with-case-fatality-rate",
+    "title": "Data Visualization",
+    "section": "\n2.5 Plot the world map with case-fatality rate",
+    "text": "2.5 Plot the world map with case-fatality rate\nI tried using geom_map, but the plot had no map in it and the issue could not be resolved. Hence, I have used an alternative approach to plot the map using geom_polygon.\n\nggplot(world, aes(x = long, y = lat, group = group, fill = case_fatality_rate)) +\n  geom_polygon(color = \"black\") +\n  labs(title = \"Confirmed COVID-19 Deaths relative to number of Cases\", fill = \"Case Fatality Rate\") +\n  scale_fill_gradient(low = \"red\", high = \"black\", na.value = \"gray\")"
   }
 ]

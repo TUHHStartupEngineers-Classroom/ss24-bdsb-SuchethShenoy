@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.269">
-
+<meta name="generator" content="quarto-1.3.450">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="author" content="Joschka Schwarz">
-
+<meta name="author" content="Sucheth Shenoy">
 <title>MyLabJournal - Data Acquisition</title>
 <style>
 code{white-space: pre-wrap;}
@@ -18,11 +15,44 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
-
 
 <script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../../site_libs/quarto-nav/headroom.min.js"></script>
@@ -42,8 +72,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script id="quarto-search-options" type="application/json">{
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark"><script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
@@ -59,85 +88,104 @@ ul.task-list li input[type="checkbox"] {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
-}</script>
-
-
+}</script><link href="../../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="../../site_libs/pagedtable-1.1/js/pagedtable.js"></script>
 </head>
-
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
-      <div class="navbar-container container-fluid">
+  <header id="quarto-header" class="headroom fixed-top"><nav class="navbar navbar-expand-lg navbar-dark "><div class="navbar-container container-fluid">
       <div class="navbar-brand-container">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">MyLabJournal</span>
     </a>
   </div>
+            <div id="quarto-search" class="" title="Search"></div>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
-  <li class="nav-item">
-    <a class="nav-link" href="../../index.html">
+<li class="nav-item">
+    <a class="nav-link" href="../../index.html" rel="" target="">
  <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item dropdown ">
-    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-journal" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-journal" role="button" data-bs-toggle="dropdown" aria-expanded="false" rel="" target="">
  <span class="menu-text">Journal</span>
     </a>
-    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">    
-        <li>
-    <a class="dropdown-item" href="../../content/01_journal/01_tidyverse.html">
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-journal">
+<li>
+    <a class="dropdown-item" href="../../content/01_journal/01_tidyverse.html" rel="" target="">
  <span class="dropdown-text">01 Tidyverse</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../content/01_journal/02_data_acquisition.html">
+    <a class="dropdown-item" href="../../content/01_journal/02_data_acquisition.html" rel="" target="">
  <span class="dropdown-text">02 Data Acquisition</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../content/01_journal/03_data_wrangling.html">
+    <a class="dropdown-item" href="../../content/01_journal/03_data_wrangling.html" rel="" target="">
  <span class="dropdown-text">03 Data Wrangling</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="../../content/01_journal/04_data_visualization.html">
+    <a class="dropdown-item" href="../../content/01_journal/04_data_visualization.html" rel="" target="">
  <span class="dropdown-text">04 Data Visualization</span></a>
   </li>  
     </ul>
-  </li>
+</li>
   <li class="nav-item">
-    <a class="nav-link" href="../../content/02_notes/05_class_notes.html">
+    <a class="nav-link" href="../../content/02_notes/05_class_notes.html" rel="" target="">
  <span class="menu-text">Class notes</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../content/03_other/06_links.html">
+    <a class="nav-link" href="../../content/03_other/06_links.html" rel="" target="">
  <span class="menu-text">Links</span></a>
   </li>  
 </ul>
-              <div class="quarto-toggle-container">
-                  <a href="" class="quarto-color-scheme-toggle nav-link" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
-              </div>
-              <div id="quarto-search" class="" title="Search"></div>
+<div class="quarto-navbar-tools ms-auto">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
           </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
-    </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+    </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Contents</h2>
+   
+  <ul class="collapse">
+<li>
+<a href="#task-2.1-get-data-from-api---arxiv" id="toc-task-2.1-get-data-from-api---arxiv" class="nav-link active" data-scroll-target="#task-2.1-get-data-from-api---arxiv"><span class="header-section-number">1</span> Task 2.1: Get data from API - arXiv</a>
+  <ul class="collapse">
+<li><a href="#load-libraries" id="toc-load-libraries" class="nav-link" data-scroll-target="#load-libraries"><span class="header-section-number">1.1</span> Load Libraries</a></li>
+  <li><a href="#define-the-url-for-the-arxiv-search-page" id="toc-define-the-url-for-the-arxiv-search-page" class="nav-link" data-scroll-target="#define-the-url-for-the-arxiv-search-page"><span class="header-section-number">1.2</span> Define the URL for the arXiv search page</a></li>
+  <li><a href="#read-the-html-content-of-the-search-page" id="toc-read-the-html-content-of-the-search-page" class="nav-link" data-scroll-target="#read-the-html-content-of-the-search-page"><span class="header-section-number">1.3</span> Read the HTML content of the search page</a></li>
+  <li><a href="#extract-the-urls-of-the-search-results-research-papers" id="toc-extract-the-urls-of-the-search-results-research-papers" class="nav-link" data-scroll-target="#extract-the-urls-of-the-search-results-research-papers"><span class="header-section-number">1.4</span> Extract the URLs of the search results (research papers)</a></li>
+  <li><a href="#create-an-empty-tibble-to-store-data" id="toc-create-an-empty-tibble-to-store-data" class="nav-link" data-scroll-target="#create-an-empty-tibble-to-store-data"><span class="header-section-number">1.5</span> Create an empty Tibble to store data</a></li>
+  <li><a href="#extract-data-for-each-research-paper" id="toc-extract-data-for-each-research-paper" class="nav-link" data-scroll-target="#extract-data-for-each-research-paper"><span class="header-section-number">1.6</span> Extract data for each research paper</a></li>
+  <li><a href="#print-the-first-10-rows-of-the-tibble" id="toc-print-the-first-10-rows-of-the-tibble" class="nav-link" data-scroll-target="#print-the-first-10-rows-of-the-tibble"><span class="header-section-number">1.7</span> Print the first 10 rows of the Tibble</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#task-2.2-scrape-competitor-website-httpswww.radon-bikes.de" id="toc-task-2.2-scrape-competitor-website-httpswww.radon-bikes.de" class="nav-link" data-scroll-target="#task-2.2-scrape-competitor-website-httpswww.radon-bikes.de"><span class="header-section-number">2</span> Task 2.2: Scrape competitor website (https://www.radon-bikes.de)</a>
+  <ul class="collapse">
+<li><a href="#load-libraries-1" id="toc-load-libraries-1" class="nav-link" data-scroll-target="#load-libraries-1"><span class="header-section-number">2.1</span> Load Libraries</a></li>
+  <li><a href="#collect-product-catalogues" id="toc-collect-product-catalogues" class="nav-link" data-scroll-target="#collect-product-catalogues"><span class="header-section-number">2.2</span> Collect Product Catalogues</a></li>
+  <li><a href="#function-to-get-bike-urls" id="toc-function-to-get-bike-urls" class="nav-link" data-scroll-target="#function-to-get-bike-urls"><span class="header-section-number">2.3</span> Function to get Bike urls</a></li>
+  <li><a href="#get-bike-urls-and-create-a-tibble" id="toc-get-bike-urls-and-create-a-tibble" class="nav-link" data-scroll-target="#get-bike-urls-and-create-a-tibble"><span class="header-section-number">2.4</span> Get Bike urls and create a Tibble</a></li>
+  <li><a href="#create-a-tibble-for-the-bike-category-hardtail" id="toc-create-a-tibble-for-the-bike-category-hardtail" class="nav-link" data-scroll-target="#create-a-tibble-for-the-bike-category-hardtail"><span class="header-section-number">2.5</span> Create a Tibble for the Bike Category: Hardtail</a></li>
+  <li><a href="#function-to-get-bike-model-data" id="toc-function-to-get-bike-model-data" class="nav-link" data-scroll-target="#function-to-get-bike-model-data"><span class="header-section-number">2.6</span> Function to get bike model data</a></li>
+  <li><a href="#get-bike-model-data-for-hardtail-category" id="toc-get-bike-model-data-for-hardtail-category" class="nav-link" data-scroll-target="#get-bike-model-data-for-hardtail-category"><span class="header-section-number">2.7</span> Get bike model data for Hardtail category</a></li>
+  <li><a href="#print-the-first-10-rows-of-the-tibble-1" id="toc-print-the-first-10-rows-of-the-tibble-1" class="nav-link" data-scroll-target="#print-the-first-10-rows-of-the-tibble-1"><span class="header-section-number">2.8</span> Print the first 10 rows of the Tibble</a></li>
+  </ul>
+</li>
+  </ul></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
 <h1 class="title">Data Acquisition</h1>
 </div>
 
@@ -148,7 +196,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Author</div>
     <div class="quarto-title-meta-contents">
-             <p>Joschka Schwarz </p>
+             <p>Sucheth Shenoy </p>
           </div>
   </div>
     
@@ -157,26 +205,226 @@ ul.task-list li input[type="checkbox"] {
   </div>
   
 
-</header>
+</header><section id="task-2.1-get-data-from-api---arxiv" class="level1" data-number="1"><h1 data-number="1">
+<span class="header-section-number">1</span> Task 2.1: Get data from API - arXiv</h1>
+<section id="load-libraries" class="level2" data-number="1.1"><h2 data-number="1.1" class="anchored" data-anchor-id="load-libraries">
+<span class="header-section-number">1.1</span> Load Libraries</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-1_084f2a8dd49c6f9fc04dfb0c4be16291">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="fu">library</span>(rvest)</span>
+<span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(stringr)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(tibble)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="define-the-url-for-the-arxiv-search-page" class="level2" data-number="1.2"><h2 data-number="1.2" class="anchored" data-anchor-id="define-the-url-for-the-arxiv-search-page">
+<span class="header-section-number">1.2</span> Define the URL for the arXiv search page</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-2_501fe2820f44f781b6cea6f9490315e8">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>topic <span class="ot">&lt;-</span> <span class="st">"Koopman+Operator+Theory"</span>  <span class="co"># Replace with the topic you're interested in</span></span>
+<span id="cb2-2"><a href="#cb2-2"></a>search_url <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://arxiv.org/search/?query="</span>, topic, <span class="st">"&amp;searchtype=all&amp;order=-announced_date_first&amp;size=50"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="read-the-html-content-of-the-search-page" class="level2" data-number="1.3"><h2 data-number="1.3" class="anchored" data-anchor-id="read-the-html-content-of-the-search-page">
+<span class="header-section-number">1.3</span> Read the HTML content of the search page</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-3_a65fb12621ce2e26901cb317419e3f66">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>search_page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(search_url)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="extract-the-urls-of-the-search-results-research-papers" class="level2" data-number="1.4"><h2 data-number="1.4" class="anchored" data-anchor-id="extract-the-urls-of-the-search-results-research-papers">
+<span class="header-section-number">1.4</span> Extract the URLs of the search results (research papers)</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-4_4d1f3915fe547d57d7b4d2f5074291a4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>paper_urls <span class="ot">&lt;-</span> search_page <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2"></a>  <span class="fu">html_nodes</span>(<span class="st">"a"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3"></a>  <span class="fu">html_attr</span>(<span class="st">"href"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-4"><a href="#cb4-4"></a>  <span class="fu">str_subset</span>(<span class="at">pattern =</span> <span class="st">"abs"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="create-an-empty-tibble-to-store-data" class="level2" data-number="1.5"><h2 data-number="1.5" class="anchored" data-anchor-id="create-an-empty-tibble-to-store-data">
+<span class="header-section-number">1.5</span> Create an empty Tibble to store data</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-5_ac80d5f828e18b966cd34c30db0f9773">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>papers_info <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb5-2"><a href="#cb5-2"></a>  <span class="at">title =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-3"><a href="#cb5-3"></a>  <span class="at">url =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-4"><a href="#cb5-4"></a>  <span class="at">abstract =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-5"><a href="#cb5-5"></a>  <span class="at">author_names =</span> <span class="fu">character</span>(),</span>
+<span id="cb5-6"><a href="#cb5-6"></a>  <span class="at">submission_date =</span> <span class="fu">character</span>()</span>
+<span id="cb5-7"><a href="#cb5-7"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="extract-data-for-each-research-paper" class="level2" data-number="1.6"><h2 data-number="1.6" class="anchored" data-anchor-id="extract-data-for-each-research-paper">
+<span class="header-section-number">1.6</span> Extract data for each research paper</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-6_27858840f29130b2eea84618cafad32d">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="cf">for</span> (url <span class="cf">in</span> paper_urls) {</span>
+<span id="cb6-2"><a href="#cb6-2"></a>  paper_page <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb6-3"><a href="#cb6-3"></a>  title <span class="ot">&lt;-</span> paper_page <span class="sc">%&gt;%</span></span>
+<span id="cb6-4"><a href="#cb6-4"></a>    <span class="fu">html_node</span>(<span class="st">"title"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-5"><a href="#cb6-5"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-6"><a href="#cb6-6"></a>    <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">[</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">.</span><span class="sc">\\</span><span class="st">d+</span><span class="sc">\\</span><span class="st">]"</span>, <span class="st">""</span>, .)</span>
+<span id="cb6-7"><a href="#cb6-7"></a>  </span>
+<span id="cb6-8"><a href="#cb6-8"></a>  abstract <span class="ot">&lt;-</span> paper_page <span class="sc">%&gt;%</span></span>
+<span id="cb6-9"><a href="#cb6-9"></a>    <span class="fu">html_node</span>(<span class="st">"meta[property='og:description']"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-10"><a href="#cb6-10"></a>    <span class="fu">html_attr</span>(<span class="st">"content"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11"></a>  </span>
+<span id="cb6-12"><a href="#cb6-12"></a>  author_names <span class="ot">&lt;-</span> paper_page <span class="sc">%&gt;%</span></span>
+<span id="cb6-13"><a href="#cb6-13"></a>    <span class="fu">html_node</span>(<span class="st">".authors"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-14"><a href="#cb6-14"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-15"><a href="#cb6-15"></a>    <span class="fu">gsub</span>(<span class="st">"Authors:"</span>, <span class="st">""</span>, .) <span class="sc">%&gt;%</span></span>
+<span id="cb6-16"><a href="#cb6-16"></a>    <span class="fu">trimws</span>()</span>
+<span id="cb6-17"><a href="#cb6-17"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18"></a>  submission_date <span class="ot">&lt;-</span> paper_page <span class="sc">%&gt;%</span></span>
+<span id="cb6-19"><a href="#cb6-19"></a>    <span class="fu">html_node</span>(<span class="st">".dateline"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-20"><a href="#cb6-20"></a>    <span class="fu">html_text</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb6-21"><a href="#cb6-21"></a>    <span class="fu">gsub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">[Submitted on |</span><span class="sc">\\</span><span class="st">]"</span>, <span class="st">""</span>, .) <span class="sc">%&gt;%</span></span>
+<span id="cb6-22"><a href="#cb6-22"></a>    <span class="fu">trimws</span>()</span>
+<span id="cb6-23"><a href="#cb6-23"></a>  </span>
+<span id="cb6-24"><a href="#cb6-24"></a>  papers_info <span class="ot">&lt;-</span> papers_info <span class="sc">%&gt;%</span></span>
+<span id="cb6-25"><a href="#cb6-25"></a>    <span class="fu">add_row</span>(</span>
+<span id="cb6-26"><a href="#cb6-26"></a>      <span class="at">title =</span> title,</span>
+<span id="cb6-27"><a href="#cb6-27"></a>      <span class="at">url =</span> url,</span>
+<span id="cb6-28"><a href="#cb6-28"></a>      <span class="at">abstract =</span> abstract,</span>
+<span id="cb6-29"><a href="#cb6-29"></a>      <span class="at">author_names =</span> author_names,</span>
+<span id="cb6-30"><a href="#cb6-30"></a>      <span class="at">submission_date =</span> submission_date</span>
+<span id="cb6-31"><a href="#cb6-31"></a>    )</span>
+<span id="cb6-32"><a href="#cb6-32"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="print-the-first-10-rows-of-the-tibble" class="level2" data-number="1.7"><h2 data-number="1.7" class="anchored" data-anchor-id="print-the-first-10-rows-of-the-tibble">
+<span class="header-section-number">1.7</span> Print the first 10 rows of the Tibble</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-7_c7d399db95d6b11de2da57e849e2b545">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a><span class="fu">print</span>(<span class="fu">head</span>(papers_info, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 10 × 5
+#&gt;    title                             url   abstract author_names submission_date
+#&gt;    &lt;chr&gt;                             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;        &lt;chr&gt;          
+#&gt;  1 " Koopman-based Deep Learning fo… http… "Nonlin… Zexin Sun, … 1 May 2024     
+#&gt;  2 " Thermodynamics of chaotic rela… http… "The es… Domenico Li… 14 Apr 2024    
+#&gt;  3 " On the Effect of Quantization … http… "Dynami… Dipankar Ma… 2 Apr 2024     
+#&gt;  4 " An SVD-like Decomposition of B… http… "The Si… Brian Charl… 29 Mar 2024    
+#&gt;  5 " Quantum asymptotic amplitude f… http… "We hav… Yuzuru Kato  28 Mar 2024    
+#&gt;  6 " Control-Coherent Koopman Model… http… "The mo… H. Harry As… 24 Mar 2024    
+#&gt;  7 " Centroidal State Estimation ba… http… "In thi… Shahram Kho… 20 Mar 2024    
+#&gt;  8 " Temporally-Consistent Koopman … http… "Absenc… Indranil Na… 19 Mar 2024    
+#&gt;  9 " Deep Learning Based Dynamics I… http… "The st… George Nehm… 13 Mar 2024    
+#&gt; 10 " Koopman operators with intrins… http… "This p… Isao Ishika… 4 Mar 2024 (v1…</code></pre>
+</div>
+</div>
+</section></section><section id="task-2.2-scrape-competitor-website-httpswww.radon-bikes.de" class="level1" data-number="2"><h1 data-number="2">
+<span class="header-section-number">2</span> Task 2.2: Scrape competitor website (https://www.radon-bikes.de)</h1>
+<section id="load-libraries-1" class="level2" data-number="2.1"><h2 data-number="2.1" class="anchored" data-anchor-id="load-libraries-1">
+<span class="header-section-number">2.1</span> Load Libraries</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-8_0f6979a9704625817426a0774a971b3c">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a><span class="fu">library</span>(tidyverse) <span class="co"># Main Package - Loads dplyr, purrr, etc.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#&gt; ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+#&gt; ✔ dplyr     1.1.4     ✔ purrr     1.0.2
+#&gt; ✔ forcats   1.0.0     ✔ readr     2.1.5
+#&gt; ✔ ggplot2   3.5.1     ✔ tidyr     1.3.1
+#&gt; ✔ lubridate 1.9.3     
+#&gt; ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+#&gt; ✖ dplyr::filter()         masks stats::filter()
+#&gt; ✖ readr::guess_encoding() masks rvest::guess_encoding()
+#&gt; ✖ dplyr::lag()            masks stats::lag()
+#&gt; ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a><span class="fu">library</span>(rvest)     <span class="co"># HTML Hacking &amp; Web Scraping</span></span>
+<span id="cb11-2"><a href="#cb11-2"></a><span class="fu">library</span>(xopen)     <span class="co"># Quickly opening URLs</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="collect-product-catalogues" class="level2" data-number="2.2"><h2 data-number="2.2" class="anchored" data-anchor-id="collect-product-catalogues">
+<span class="header-section-number">2.2</span> Collect Product Catalogues</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-9_570f902db8b1674e96b7c10ef544262e">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>url_home        <span class="ot">&lt;-</span> <span class="st">"https://www.radon-bikes.de/en"</span></span>
+<span id="cb12-2"><a href="#cb12-2"></a></span>
+<span id="cb12-3"><a href="#cb12-3"></a>html_home       <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url_home)</span>
+<span id="cb12-4"><a href="#cb12-4"></a></span>
+<span id="cb12-5"><a href="#cb12-5"></a>bike_categories_chr <span class="ot">&lt;-</span> html_home <span class="sc">%&gt;%</span></span>
+<span id="cb12-6"><a href="#cb12-6"></a>  <span class="fu">html_elements</span>(<span class="st">".megamenu a"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-7"><a href="#cb12-7"></a>  <span class="fu">html_attr</span>(<span class="st">"href"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb12-8"><a href="#cb12-8"></a>  <span class="fu">str_subset</span>(<span class="at">pattern =</span> <span class="st">"#|wear"</span>, <span class="at">negate =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb12-9"><a href="#cb12-9"></a>  <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-10"><a href="#cb12-10"></a>  <span class="fu">str_c</span>(<span class="st">"https://www.radon-bikes.de"</span>, ., <span class="at">sep =</span> <span class="st">""</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="function-to-get-bike-urls" class="level2" data-number="2.3"><h2 data-number="2.3" class="anchored" data-anchor-id="function-to-get-bike-urls">
+<span class="header-section-number">2.3</span> Function to get Bike urls</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-10_bd2df4159ffa8c692c309fd13c9c2f9f">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>get_bike_urls <span class="ot">&lt;-</span> <span class="cf">function</span>(url) {</span>
+<span id="cb13-2"><a href="#cb13-2"></a>  </span>
+<span id="cb13-3"><a href="#cb13-3"></a>  html_bike_category <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb13-4"><a href="#cb13-4"></a>  </span>
+<span id="cb13-5"><a href="#cb13-5"></a>  <span class="co"># Get the URLs</span></span>
+<span id="cb13-6"><a href="#cb13-6"></a>  bike_url_chr  <span class="ot">&lt;-</span> html_bike_category <span class="sc">%&gt;%</span></span>
+<span id="cb13-7"><a href="#cb13-7"></a>    <span class="fu">html_elements</span>(<span class="st">"a.a-button"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-8"><a href="#cb13-8"></a>    <span class="fu">html_attr</span>(<span class="st">"href"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb13-9"><a href="#cb13-9"></a>    <span class="fu">str_subset</span>(<span class="at">pattern =</span> <span class="st">"bikegrid|slush|instagram"</span>, <span class="at">negate =</span> T) <span class="sc">%&gt;%</span></span>
+<span id="cb13-10"><a href="#cb13-10"></a>    <span class="fu">unique</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb13-11"><a href="#cb13-11"></a>    <span class="fu">str_c</span>(<span class="st">"https://www.radon-bikes.de"</span>, ., <span class="at">sep =</span> <span class="st">""</span>)</span>
+<span id="cb13-12"><a href="#cb13-12"></a>  </span>
+<span id="cb13-13"><a href="#cb13-13"></a>  <span class="fu">return</span>(bike_url_chr)</span>
+<span id="cb13-14"><a href="#cb13-14"></a>  </span>
+<span id="cb13-15"><a href="#cb13-15"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="get-bike-urls-and-create-a-tibble" class="level2" data-number="2.4"><h2 data-number="2.4" class="anchored" data-anchor-id="get-bike-urls-and-create-a-tibble">
+<span class="header-section-number">2.4</span> Get Bike urls and create a Tibble</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-11_91d09875a0e42034413acc52d5c077ef">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a>bike_urls_chr <span class="ot">&lt;-</span> <span class="fu">map</span>(bike_categories_chr, get_bike_urls) <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2"></a>  <span class="fu">flatten_chr</span>() <span class="sc">|&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3"></a>  <span class="fu">unique</span>()</span>
+<span id="cb14-4"><a href="#cb14-4"></a></span>
+<span id="cb14-5"><a href="#cb14-5"></a>bike_urls_tbl <span class="ot">&lt;-</span> bike_urls_chr <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6"></a>  tibble<span class="sc">::</span><span class="fu">as_tibble_col</span>(<span class="at">column_name =</span> <span class="st">"url"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-7"><a href="#cb14-7"></a>  tidyr<span class="sc">::</span><span class="fu">separate_wider_regex</span>(<span class="at">cols =</span> url, <span class="at">patterns =</span> <span class="fu">c</span>(<span class="st">".*de/en/"</span>, <span class="at">family   =</span> <span class="st">"[^/]*"</span>, <span class="st">"/"</span>,</span>
+<span id="cb14-8"><a href="#cb14-8"></a>                                                       <span class="at">category =</span> <span class="st">"[^/]*"</span>, <span class="st">"/"</span>,</span>
+<span id="cb14-9"><a href="#cb14-9"></a>                                                       <span class="at">model_type    =</span> <span class="st">"[^/]*"</span>, <span class="st">"/"</span>,</span>
+<span id="cb14-10"><a href="#cb14-10"></a>                                                       <span class="at">model =</span> <span class="st">"[^/]*"</span>, <span class="st">"/"</span>,</span>
+<span id="cb14-11"><a href="#cb14-11"></a>                                                       <span class="st">".*"</span>), <span class="at">cols_remove =</span> F)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="create-a-tibble-for-the-bike-category-hardtail" class="level2" data-number="2.5"><h2 data-number="2.5" class="anchored" data-anchor-id="create-a-tibble-for-the-bike-category-hardtail">
+<span class="header-section-number">2.5</span> Create a Tibble for the Bike Category: Hardtail</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-12_017525a562922c7ae794076f8fe2d625">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>bike_urls_hardtail_tbl <span class="ot">&lt;-</span> bike_urls_tbl <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2"></a>  <span class="fu">filter</span>(category <span class="sc">==</span> <span class="st">"hardtail"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="function-to-get-bike-model-data" class="level2" data-number="2.6"><h2 data-number="2.6" class="anchored" data-anchor-id="function-to-get-bike-model-data">
+<span class="header-section-number">2.6</span> Function to get bike model data</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-13_a51623735c669fd79fca578282ca2b9c">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>get_model_data <span class="ot">&lt;-</span> <span class="cf">function</span>(url) {</span>
+<span id="cb16-2"><a href="#cb16-2"></a>  </span>
+<span id="cb16-3"><a href="#cb16-3"></a>  html_bike_model <span class="ot">&lt;-</span> <span class="fu">read_html</span>(url)</span>
+<span id="cb16-4"><a href="#cb16-4"></a>  </span>
+<span id="cb16-5"><a href="#cb16-5"></a>  bike_price <span class="ot">&lt;-</span> html_bike_model <span class="sc">|&gt;</span></span>
+<span id="cb16-6"><a href="#cb16-6"></a>    <span class="fu">html_element</span>(<span class="st">".m-bikedetail__price--active"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb16-7"><a href="#cb16-7"></a>    <span class="fu">html_text</span>() <span class="sc">|&gt;</span></span>
+<span id="cb16-8"><a href="#cb16-8"></a>    <span class="fu">parse_number</span>()</span>
+<span id="cb16-9"><a href="#cb16-9"></a>  </span>
+<span id="cb16-10"><a href="#cb16-10"></a>  bike_data <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">url   =</span> url,</span>
+<span id="cb16-11"><a href="#cb16-11"></a>                      <span class="at">price =</span> bike_price)</span>
+<span id="cb16-12"><a href="#cb16-12"></a>  </span>
+<span id="cb16-13"><a href="#cb16-13"></a>  <span class="fu">return</span>(bike_data)</span>
+<span id="cb16-14"><a href="#cb16-14"></a>  </span>
+<span id="cb16-15"><a href="#cb16-15"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="get-bike-model-data-for-hardtail-category" class="level2" data-number="2.7"><h2 data-number="2.7" class="anchored" data-anchor-id="get-bike-model-data-for-hardtail-category">
+<span class="header-section-number">2.7</span> Get bike model data for Hardtail category</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-14_ef1b63c5a55e1ed94c5fa0b0735e5807">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a>bike_model_data_tbl <span class="ot">&lt;-</span> bike_urls_hardtail_tbl<span class="sc">$</span>url <span class="sc">|&gt;</span> <span class="fu">map_dfr</span>(get_model_data)</span>
+<span id="cb17-2"><a href="#cb17-2"></a></span>
+<span id="cb17-3"><a href="#cb17-3"></a>bike_model_data_joined_tbl <span class="ot">&lt;-</span> bike_urls_hardtail_tbl <span class="sc">|&gt;</span> </span>
+<span id="cb17-4"><a href="#cb17-4"></a>  <span class="fu">left_join</span>(bike_model_data_tbl, <span class="at">by =</span> <span class="fu">join_by</span>(<span class="st">"url"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section><section id="print-the-first-10-rows-of-the-tibble-1" class="level2" data-number="2.8"><h2 data-number="2.8" class="anchored" data-anchor-id="print-the-first-10-rows-of-the-tibble-1">
+<span class="header-section-number">2.8</span> Print the first 10 rows of the Tibble</h2>
+<div class="cell" data-hash="02_data_acquisition_cache/html/unnamed-chunk-15_873a10aeb4df6f40b3bb291fcd2b745c">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a><span class="fu">print</span>(<span class="fu">head</span>(bike_model_data_joined_tbl, <span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>#&gt; # A tibble: 10 × 6
+#&gt;    family       category model_type model                            url   price
+#&gt;    &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt;      &lt;chr&gt;                            &lt;chr&gt; &lt;dbl&gt;
+#&gt;  1 mountainbike hardtail jealous    jealous-80-2024                  http… 2520.
+#&gt;  2 mountainbike hardtail jealous    jealous-90-2024                  http… 2856.
+#&gt;  3 mountainbike hardtail jealous    jealous-100-ea-2024              http… 4369.
+#&gt;  4 mountainbike hardtail jealous    jealous-80-2023                  http… 1848.
+#&gt;  5 mountainbike hardtail jealous    jealous-90-2023                  http… 2184.
+#&gt;  6 mountainbike hardtail jealous    jealous-100-2023                 http… 2772.
+#&gt;  7 mountainbike hardtail jealous    jealous-100-ea-2023              http… 3781.
+#&gt;  8 mountainbike hardtail jealous-al jealous-al-60-2024               http…  840.
+#&gt;  9 mountainbike hardtail jealous-al jealous-al-60-2024-petroleumblue http…  840.
+#&gt; 10 mountainbike hardtail jealous-al jealous-al-70-2024               http…  840.</code></pre>
+</div>
+</div>
 
-<div class="callout-note callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Note
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<p>You can delete everything in here and start fresh.</p>
-</div>
-</div>
 
-
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -318,9 +566,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -385,6 +647,92 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
